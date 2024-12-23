@@ -3,13 +3,11 @@ import { Note } from "../models/noteModel.js";
 export const createNote = async (req, res, next) => {
   try {
     const { title, content, folder } = req.body;
-    const noteData = {};
-
-    if (title) noteData.title = title;
-    if (content) noteData.content = content;
-    if (folder) noteData.folder = folder;
-
-    const note = new Note(noteData);
+    const note = new Note({
+      title,
+      content,
+      folder: folder || null,
+    });
 
     await note.save();
     res.status(201).json(note);
@@ -31,7 +29,7 @@ export const getAllNotes = async (req, res, next) => {
 
 export const getNotesWithoutFolder = async (req, res, next) => {
   try {
-    const notes = await Note.find({ folder: { $exists: false } });
+    const notes = await Note.find({ folder: null });
     res.status(200).json(notes);
   } catch (error) {
     console.log("Error in getting notes without folder: ", error);
