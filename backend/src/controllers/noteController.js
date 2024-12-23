@@ -29,6 +29,16 @@ export const getAllNotes = async (req, res, next) => {
   }
 };
 
+export const getNotesWithoutFolder = async (req, res, next) => {
+  try {
+    const notes = await Note.find({ folder: { $exists: false } });
+    res.status(200).json(notes);
+  } catch (error) {
+    console.log("Error in getting notes without folder: ", error);
+    next(error);
+  }
+};
+
 export const updateNote = async (req, res, next) => {
   try {
     const { id } = req.params;
