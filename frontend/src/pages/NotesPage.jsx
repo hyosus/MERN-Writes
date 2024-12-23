@@ -1,6 +1,14 @@
 import FilterBar from "@/components/FilterBar";
 import NotesDocument from "@/components/notes/NotesDocument";
 import NotesFolder from "@/components/notes/NotesFolder";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { File, Folder, Plus } from "lucide-react";
 import React, { useState } from "react";
 
 function NotesPage() {
@@ -11,7 +19,7 @@ function NotesPage() {
   };
 
   return (
-    <div className="text-white bg-zinc-900 w-full h-[calc(100vh-40px-3rem)] rounded-lg p-6">
+    <main className="text-white bg-zinc-900 w-full h-[calc(100vh-40px-3rem)] rounded-lg p-6">
       <FilterBar filter={filter} onFilterChange={handleFilterChange} />
 
       <div className="flex flex-col h-full">
@@ -22,7 +30,29 @@ function NotesPage() {
           <NotesDocument filter={filter} />
         ) : null}
       </div>
-    </div>
+      <div className="fixed bottom-14 right-14">
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger>
+            <Plus
+              className="bg-white rounded-full p-3 shadow-lg shadow-black/25"
+              color="black"
+              size={60}
+            />
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent className="w-5">
+            <DropdownMenuItem className="hover:bg-zinc-200 text-lg cursor-pointer">
+              <File />
+              Note
+            </DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-zinc-200 text-lg cursor-pointer">
+              <Folder />
+              Folder
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </main>
   );
 }
 
