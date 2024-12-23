@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/lib/axios";
 import React, { useEffect, useState } from "react";
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea } from "../ui/scroll-area";
 
 async function getNotes() {
   try {
@@ -35,7 +35,7 @@ function NoteBlock({ note }) {
   );
 }
 
-function NotesDocument() {
+function NotesDocument({ filter }) {
   const [notes, setNotes] = useState([]);
 
   useEffect(() => {
@@ -49,9 +49,9 @@ function NotesDocument() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold pb-4">Documents</h1>
+      <h1 className="text-2xl font-bold py-4">Documents</h1>
 
-      <ScrollArea className="h-[80%]">
+      <ScrollArea className={filter === "Document" ? "h-[85%]" : "h-[40%]"}>
         <ul className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {notes.slice(0, 6).map((note) => (
             <NoteBlock key={note.id} note={note} />
