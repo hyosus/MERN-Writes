@@ -1,10 +1,16 @@
 import { User } from "../models/userModel.js";
 import { Session } from "../models/sessionMode.js";
 import { VerificationCode } from "../models/verificationCodeModel.js";
-import { JWT_REFRESH_SECRET, JWT_SECRET } from "../constants/env.js";
+import {
+  APP_ORIGIN,
+  JWT_REFRESH_SECRET,
+  JWT_SECRET,
+} from "../constants/env.js";
 import { omitPassword } from "../utils/password.js";
 import { refreshTokenOptions, signToken, verifyToken } from "../utils/jwt.js";
 import mongoose from "mongoose";
+import { sendEmail } from "../utils/sendEmail.js";
+import { getVerifyEmailTemplate } from "../utils/emailTemplates.js";
 
 export const createAccount = async (CreateAccountParams) => {
   // verify existing user doesnt exist
@@ -20,7 +26,7 @@ export const createAccount = async (CreateAccountParams) => {
 
   await user.save();
 
-  // create verification email
+  // create verification code
   const verificationCode = new VerificationCode({
     userId: user._id,
     type: "EmailVerification",
@@ -28,6 +34,15 @@ export const createAccount = async (CreateAccountParams) => {
   });
 
   await verificationCode.save();
+
+  // send verification email
+  const url = `${APP_ORIGIN}/api/auth/verify-email/${verificationCode._id}`;
+  await sendEmail({
+    to: user.email,
+    ...getVerifyEmailTemplate(url),
+  });
+
+  // if (error) console.log("Error sending email: ", error);
 
   // create session
   const session = new Session({

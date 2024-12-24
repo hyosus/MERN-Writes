@@ -13,6 +13,6 @@ router.post("/register", registerHandler);
 router.post("/login", loginHandler);
 router.get("/logout", logoutHandler);
 router.get("/refresh", refreshHandler);
-router.get("/email/verify/:code", verifyEmailHandler);
+router.get("/verify-email/:code", verifyEmailHandler);
 
 export default router;
