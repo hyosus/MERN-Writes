@@ -1,4 +1,4 @@
-import { createAccount } from "../services/authService.js";
+import { createAccount, loginUser } from "../services/authService.js";
 import catchErrors from "../utils/catchErrors.js";
 import { setAuthCookies } from "../utils/cookies.js";
 import { loginSchema, registerSchema } from "./authSchemas.js";
@@ -29,5 +29,9 @@ export const loginHandler = catchErrors(async (req, res) => {
     userAgent: req.headers["user-agent"],
   });
 
-  const {} = await loginUser(request);
+  const { accessToken, refreshToken } = await loginUser(request);
+
+  return setAuthCookies({ res, accessToken, refreshToken })
+    .status(200)
+    .json({ message: "Login successful" });
 });
