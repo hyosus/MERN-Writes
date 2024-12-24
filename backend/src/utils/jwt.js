@@ -5,7 +5,7 @@ const defaults = {
   audience: ["user"],
 };
 
-const accessTokenOptions = {
+export const accessTokenOptions = {
   expiresIn: "15m",
   secret: JWT_SECRET,
 };

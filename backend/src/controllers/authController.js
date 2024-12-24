@@ -3,6 +3,7 @@ import {
   createAccount,
   loginUser,
   refreshUserAccessToken,
+  verifyEmail,
 } from "../services/authService.js";
 import catchErrors from "../utils/catchErrors.js";
 import {
@@ -12,7 +13,11 @@ import {
   setAuthCookies,
 } from "../utils/cookies.js";
 import { verifyToken } from "../utils/jwt.js";
-import { loginSchema, registerSchema } from "./authSchemas.js";
+import {
+  loginSchema,
+  registerSchema,
+  verificationSchema,
+} from "./authSchemas.js";
 
 export const registerHandler = catchErrors(async (req, res) => {
   // Validate request
@@ -78,4 +83,20 @@ export const refreshHandler = catchErrors(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, getAccessTokenCookieOptions)
     .json({ message: "Access token refreshed" });
+});
+
+export const verifyEmailHandler = catchErrors(async (req, res) => {
+  console.log("Req params: ", req.params);
+  const { code } = req.params;
+  const { error, value } = verificationSchema.validate({ code: code });
+  console.log("Type: ", typeof code);
+
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  console.log("value.code: ", value.code);
+  await verifyEmail(code);
+
+  return res.status(200).json({ message: "Email verified" });
 });

@@ -19,3 +19,7 @@ export const registerSchema = loginSchema
     }
     return value;
   }, "Password Match Validation");
+
+export const verificationSchema = Joi.object({
+  code: Joi.string().min(1).max(24).required(),
+});

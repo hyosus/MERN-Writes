@@ -2,9 +2,9 @@ import { User } from "../models/userModel.js";
 import { Session } from "../models/sessionMode.js";
 import { VerificationCode } from "../models/verificationCodeModel.js";
 import { JWT_REFRESH_SECRET, JWT_SECRET } from "../constants/env.js";
-import jwt from "jsonwebtoken";
 import { omitPassword } from "../utils/password.js";
 import { refreshTokenOptions, signToken, verifyToken } from "../utils/jwt.js";
+import mongoose from "mongoose";
 
 export const createAccount = async (CreateAccountParams) => {
   // verify existing user doesnt exist
@@ -22,7 +22,7 @@ export const createAccount = async (CreateAccountParams) => {
 
   // create verification email
   const verificationCode = new VerificationCode({
-    userId,
+    userId: user._id,
     type: "EmailVerification",
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
   });
@@ -31,7 +31,7 @@ export const createAccount = async (CreateAccountParams) => {
 
   // create session
   const session = new Session({
-    userId,
+    userId: user._id,
     userAgent: CreateAccountParams.userAgent,
   });
 
@@ -40,12 +40,11 @@ export const createAccount = async (CreateAccountParams) => {
   // sign access token & refresh token
   const refreshToken = signToken(
     { sessionId: session._id },
-    JWT_REFRESH_SECRET,
     refreshTokenOptions
   );
 
   const accessToken = signToken({
-    userId,
+    userId: user._id,
     sessionId: session._id,
   });
 
@@ -89,7 +88,7 @@ export const loginUser = async (LoginUserParams) => {
 
   const accessToken = signToken({
     ...sessionInfo,
-    userId,
+    userId: user._id,
   });
 
   //return user and token
@@ -131,4 +130,32 @@ export const refreshUserAccessToken = async (refreshToken) => {
     accessToken,
     newRefreshToken,
   };
+};
+
+export const verifyEmail = async (code) => {
+  // Convert the code to an ObjectId
+  const objectId = new mongoose.Types.ObjectId(`${code}`); // use string interpolation to make sure it is a string
+
+  const verificationCode = await VerificationCode.findById(objectId);
+
+  console.log("Verify email code: ", code);
+
+  if (!verificationCode) {
+    throw new Error("Invalid or expired verification code");
+  }
+
+  // Proceed with the email verification logic
+  // For example, mark the user as verified
+  const user = await User.findById(verificationCode.userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  user.verified = true;
+  await user.save();
+
+  // Optionally, delete the verification code after successful verification
+  await VerificationCode.findByIdAndDelete(verificationCode._id);
+
+  return user;
 };
