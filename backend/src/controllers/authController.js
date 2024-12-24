@@ -1,7 +1,16 @@
 import { Session } from "../models/sessionMode.js";
-import { createAccount, loginUser } from "../services/authService.js";
+import {
+  createAccount,
+  loginUser,
+  refreshUserAccessToken,
+} from "../services/authService.js";
 import catchErrors from "../utils/catchErrors.js";
-import { clearAuthCookies, setAuthCookies } from "../utils/cookies.js";
+import {
+  clearAuthCookies,
+  getAccessTokenCookieOptions,
+  getRefreshTokenCookieOptions,
+  setAuthCookies,
+} from "../utils/cookies.js";
 import { verifyToken } from "../utils/jwt.js";
 import { loginSchema, registerSchema } from "./authSchemas.js";
 
@@ -51,4 +60,22 @@ export const logoutHandler = catchErrors(async (req, res) => {
   return clearAuthCookies(res)
     .status(200)
     .json({ message: "Logout successful" });
+});
+
+export const refreshHandler = catchErrors(async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) throw new Error("No refresh token found");
+
+  const { accessToken, newRefreshToken } = await refreshUserAccessToken(
+    refreshToken
+  );
+
+  if (refreshToken) {
+    res.cookie("refresh", newRefreshToken, getRefreshTokenCookieOptions);
+  }
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, getAccessTokenCookieOptions)
+    .json({ message: "Access token refreshed" });
 });

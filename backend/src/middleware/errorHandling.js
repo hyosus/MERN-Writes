@@ -1,3 +1,5 @@
+import { clearAuthCookies } from "../utils/cookies.js";
+
 const handleJoiErro = (res, error) => {
   const errors = error.issues.map((err) => ({
     path: err.path.join("."),
@@ -12,6 +14,10 @@ const handleJoiErro = (res, error) => {
 
 const errorHandler = (error, req, res, next) => {
   console.error(`PATH: ${req.path}`, error);
+
+  if (req.path === "/api/auth/refresh") {
+    clearAuthCookies(res);
+  }
 
   if (error.isJoi) {
     return handleJoiErro(res, error);

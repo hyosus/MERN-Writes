@@ -8,12 +8,12 @@ const defaults = {
   secure: secure,
 };
 
-const getAccessTokenCookieOptions = () => ({
+export const getAccessTokenCookieOptions = () => ({
   ...defaults,
   expires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
 });
 
-const getRefreshTokenCookieOptions = () => ({
+export const getRefreshTokenCookieOptions = () => ({
   ...defaults,
   expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
   path: REFRESH_PATH,
