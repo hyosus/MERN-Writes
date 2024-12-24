@@ -7,6 +7,6 @@ import {
 const router = Router();
 
 router.post("/register", registerHandler);
-router.get("/login", loginHandler);
+router.post("/login", loginHandler);
 
 export default router;
