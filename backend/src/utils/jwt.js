@@ -19,3 +19,15 @@ export const signToken = (payload, options) => {
   const { secret, ...signOpts } = options || accessTokenOptions;
   return jwt.sign(payload, secret, { ...defaults, ...signOpts });
 };
+
+export const verifyToken = (token, options) => {
+  const { secret = JWT_SECRET, ...verifyOpts } = options || {};
+
+  try {
+    const payload = jwt.verify(token, secret, { ...defaults, ...verifyOpts });
+
+    return { payload };
+  } catch (error) {
+    return { error: error.message };
+  }
+};
