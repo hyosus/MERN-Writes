@@ -78,7 +78,7 @@ export const createAccount = async (CreateAccountParams) => {
 };
 
 export const loginUser = async (LoginUserParams) => {
-  const { email, password, userAgent } = LoginUserParams.value;
+  const { email, password, userAgent } = LoginUserParams;
 
   // get user by email
   const user = await User.findOne({ email: email });
