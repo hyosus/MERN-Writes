@@ -1,8 +1,10 @@
 import { Session } from "../models/sessionMode.js";
 import {
   createAccount,
+  forgotPassword,
   loginUser,
   refreshUserAccessToken,
+  resetPassword,
   verifyEmail,
 } from "../services/authService.js";
 import catchErrors from "../utils/catchErrors.js";
@@ -14,9 +16,11 @@ import {
 } from "../utils/cookies.js";
 import { verifyToken } from "../utils/jwt.js";
 import {
+  emailSchema,
   loginSchema,
   registerSchema,
-  verificationSchema,
+  resetPasswordSchema,
+  verificationCodeSchema,
 } from "./authSchemas.js";
 
 export const registerHandler = catchErrors(async (req, res) => {
@@ -88,8 +92,8 @@ export const refreshHandler = catchErrors(async (req, res) => {
 export const verifyEmailHandler = catchErrors(async (req, res) => {
   console.log("Req params: ", req.params);
   const { code } = req.params;
-  const { error, value } = verificationSchema.validate({ code: code });
-  console.log("Type: ", typeof code);
+  const { error, value } = verificationCodeSchema.validate(code);
+  console.log("Type: ", typeof value);
 
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
@@ -99,4 +103,26 @@ export const verifyEmailHandler = catchErrors(async (req, res) => {
   await verifyEmail(code);
 
   return res.status(200).json({ message: "Email verified" });
+});
+
+export const forgotPasswordHandler = catchErrors(async (req, res) => {
+  console.log("Req body: ", req.body);
+  const { error, value } = emailSchema.validate(req.body);
+
+  console.log("Validated email: ", value.email);
+  await forgotPassword(value.email);
+
+  return res.status(200).json({ message: "Password reset email sent" });
+});
+
+export const resetPasswordHandler = catchErrors(async (req, res) => {
+  const request = resetPasswordSchema.validate(req.body);
+  console.log("Request: ", request.value);
+  // console.log("Request TYPE: ", typeof request);
+
+  await resetPassword(request.value);
+
+  return clearAuthCookies(res)
+    .status(200)
+    .json({ message: "Password reset successful" });
 });

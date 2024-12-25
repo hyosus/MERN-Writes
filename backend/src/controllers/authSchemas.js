@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-const emailSchema = Joi.string().email().min(1).max(255).required();
+export const emailSchema = Joi.string().email().min(1).max(255).required();
 const passwordSchema = Joi.string().min(8).max(255).required();
 
 export const loginSchema = Joi.object({
@@ -20,6 +20,9 @@ export const registerSchema = loginSchema
     return value;
   }, "Password Match Validation");
 
-export const verificationSchema = Joi.object({
-  code: Joi.string().min(1).max(24).required(),
+export const verificationCodeSchema = Joi.string().min(1).max(24);
+
+export const resetPasswordSchema = Joi.object({
+  password: passwordSchema,
+  verificationCode: verificationCodeSchema,
 });

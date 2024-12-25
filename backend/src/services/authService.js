@@ -1,16 +1,22 @@
 import { User } from "../models/userModel.js";
 import { Session } from "../models/sessionMode.js";
 import { VerificationCode } from "../models/verificationCodeModel.js";
-import {
-  APP_ORIGIN,
-  JWT_REFRESH_SECRET,
-  JWT_SECRET,
-} from "../constants/env.js";
+import { APP_ORIGIN } from "../constants/env.js";
 import { omitPassword } from "../utils/password.js";
 import { refreshTokenOptions, signToken, verifyToken } from "../utils/jwt.js";
 import mongoose from "mongoose";
 import { sendEmail } from "../utils/sendEmail.js";
-import { getVerifyEmailTemplate } from "../utils/emailTemplates.js";
+import {
+  getPasswordResetTemplate,
+  getVerifyEmailTemplate,
+} from "../utils/emailTemplates.js";
+import {
+  fiveMinutesAgo,
+  oneHourFromNow,
+  sevenDaysFromNow,
+  thirtyDaysFromNow,
+} from "../utils/date.js";
+import bcrypt from "bcrypt";
 
 export const createAccount = async (CreateAccountParams) => {
   // verify existing user doesnt exist
@@ -30,7 +36,7 @@ export const createAccount = async (CreateAccountParams) => {
   const verificationCode = new VerificationCode({
     userId: user._id,
     type: "EmailVerification",
-    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+    expiresAt: sevenDaysFromNow(), // 7 days from now
   });
 
   await verificationCode.save();
@@ -127,7 +133,7 @@ export const refreshUserAccessToken = async (refreshToken) => {
     session.expiresAt.getTime() - now <= 24 * 60 * 60 * 1000;
 
   if (sessionNeedRefresh) {
-    session.expiresAt = new Date(now + 30 * 24 * 60 * 60 * 1000);
+    session.expiresAt = thirtyDaysFromNow();
     await session.save();
   }
 
@@ -173,4 +179,70 @@ export const verifyEmail = async (code) => {
   await VerificationCode.findByIdAndDelete(verificationCode._id);
 
   return user;
+};
+
+export const forgotPassword = async (email) => {
+  // get user by email
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("Invalid email");
+
+  // check email rate limit
+  const fiveMinsAgo = fiveMinutesAgo();
+  const count = await VerificationCode.countDocuments({
+    userId: user._id,
+    type: "EmailVerification",
+    createdAt: { $gt: fiveMinsAgo },
+  });
+
+  if (count >= 1) throw new Error("Email rate limit exceeded");
+
+  // create verification code
+  const expiresAt = oneHourFromNow();
+  const verificationCode = new VerificationCode({
+    userId: user._id,
+    type: "PasswordReset",
+    expiresAt,
+  });
+
+  await verificationCode.save();
+
+  // send password reset email
+  const url = `${APP_ORIGIN}/api/auth/reset-password?code=${
+    verificationCode._id
+  }&exp=${expiresAt.getTime()}`;
+
+  await sendEmail({
+    to: user.email,
+    ...getPasswordResetTemplate(url),
+  });
+
+  return url;
+};
+
+export const resetPassword = async ({ verificationCode, password }) => {
+  console.log("Valid code: ", verificationCode);
+  // verify code
+  const validCode = await VerificationCode.findOne({
+    _id: verificationCode,
+    type: "PasswordReset",
+    expiresAt: { $gt: new Date() },
+  });
+
+  if (!validCode) throw new Error("Invalid or expired verification code");
+
+  // get user and update password
+  const salt = await bcrypt.genSalt(10);
+  const updatedUser = await User.findByIdAndUpdate(validCode.userId, {
+    password: await bcrypt.hash(password, salt),
+  });
+
+  if (!updatedUser) throw new Error("User not found");
+
+  //delete verification code
+  await validCode.deleteOne();
+
+  // delete all session so they have to login on every device again
+  await Session.deleteMany({ userId: updatedUser.userId });
+
+  return omitPassword(updatedUser);
 };
