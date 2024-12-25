@@ -7,6 +7,7 @@ import noteRoutes from "./routes/noteRoutes.js";
 import folderRoutes from "./routes/folderRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
 import { APP_ORIGIN, PORT } from "./constants/env.js";
 import errorHandler from "./middleware/errorHandling.js";
 import catchErrors from "./utils/catchErrors.js";
@@ -40,6 +41,7 @@ app.use("/api/folders", folderRoutes);
 
 // protected routes
 app.use("/api/user", authenticate, userRoutes);
+app.use("/api/sessions", authenticate, sessionRoutes);
 
 app.listen(PORT, () => {
   console.log("Server is running on port ", PORT);
