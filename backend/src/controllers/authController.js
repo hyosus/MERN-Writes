@@ -44,12 +44,14 @@ export const registerHandler = catchErrors(async (req, res) => {
 });
 
 export const loginHandler = catchErrors(async (req, res) => {
-  const request = loginSchema.validate({
+  const { error, value } = loginSchema.validate({
     ...req.body,
     userAgent: req.headers["user-agent"],
   });
 
-  const { accessToken, refreshToken } = await loginUser(request);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+
+  const { accessToken, refreshToken } = await loginUser(value);
 
   return setAuthCookies({ res, accessToken, refreshToken })
     .status(200)

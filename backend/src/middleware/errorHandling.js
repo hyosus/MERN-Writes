@@ -1,6 +1,6 @@
 import { clearAuthCookies } from "../utils/cookies.js";
 
-const handleJoiErro = (res, error) => {
+const handleJoiError = (res, error) => {
   const errors = error.issues.map((err) => ({
     path: err.path.join("."),
     message: err.message,
@@ -20,7 +20,7 @@ const errorHandler = (error, req, res, next) => {
   }
 
   if (error.isJoi) {
-    return handleJoiErro(res, error);
+    return handleJoiError(res, error);
   }
   return res.status(500).json("Internal server error");
 };
