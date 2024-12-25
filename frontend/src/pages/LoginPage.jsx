@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -45,6 +44,7 @@ const LoginPage = () => {
               <div className="flex flex-col gap-2">
                 <label>Email</label>
                 <Input
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="johnson@email.com"
@@ -76,7 +76,7 @@ const LoginPage = () => {
         <CardFooter className="flex flex-col gap-5">
           <Button
             className="w-full"
-            disabled={!email || password.length < 8}
+            disabled={!email || password.length < 7}
             onClick={() => signIn({ email, password })}
             isloading={isPending.toString()}
           >
