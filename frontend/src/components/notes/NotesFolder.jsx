@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/axios";
+import axiosInstance from "@/lib/axios";
 import { FaFolder } from "react-icons/fa6";
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
