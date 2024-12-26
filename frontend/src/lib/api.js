@@ -85,3 +85,23 @@ export const resetPassword = async ({ verificationCode, password }) => {
     );
   }
 };
+
+export const getSessions = async () => {
+  try {
+    const response = await axiosInstance.get("/sessions");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get sessions");
+  }
+};
+
+export const deleteSession = async (sessionId) => {
+  try {
+    const response = await axiosInstance.delete(`/sessions/${sessionId}`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to delete session"
+    );
+  }
+};

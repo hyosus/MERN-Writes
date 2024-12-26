@@ -7,6 +7,7 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AppContainer from "./components/AppContainer";
 import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
+import SettingsPage from "./pages/SettingsPage";
 
 export const Home = () => {
   return <div>Home</div>;
@@ -19,7 +20,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="profile" element={<ProfilePage />} />
-          {/* <Route path="settings" element={<SettingsPage />} /> */}
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Route>
 

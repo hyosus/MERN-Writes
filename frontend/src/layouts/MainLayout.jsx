@@ -7,9 +7,9 @@ const MainLayout = () => {
   return (
     <div className="flex flex-col h-screen p-4">
       <Topbar />
-      <div className="flex flex-grow h-full pt-4 gap-4">
-        <LeftSidebar />
-        <main className="flex-grow">
+      <div className="flex flex-grow gap-4 overflow-hidden pt-4">
+        <LeftSidebar className="h-full overflow-auto" />
+        <main className="flex-grow bg-zinc-900 rounded-lg p-8 h-full overflow-auto">
           <Outlet />
         </main>
       </div>
