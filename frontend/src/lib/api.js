@@ -20,3 +20,26 @@ export const register = async (data) => {
     throw new Error(error.response?.data?.message || "Registration failed");
   }
 };
+
+export const verifyEmail = async (code) => {
+  try {
+    const response = await axiosInstance.get(`/auth/verify-email/${code}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Verification failed");
+  }
+};
+
+export const sendResetPasswordEmail = async (email) => {
+  try {
+    const response = await axiosInstance.post("/auth/forgot-password", {
+      email,
+    });
+
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to send reset password email"
+    );
+  }
+};
