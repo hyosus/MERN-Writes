@@ -1,4 +1,5 @@
 import { Session } from "../models/sessionMode.js";
+import { User } from "../models/userModel.js";
 import {
   createAccount,
   forgotPassword,
@@ -109,11 +110,22 @@ export const verifyEmailHandler = catchErrors(async (req, res) => {
 });
 
 export const sendVerificationEmailHandler = catchErrors(async (req, res) => {
-  const { value } = verificationCodeSchema.validate(req.params);
-  const { email } = value;
+  // get access token from cookies
+  const accessToken = req.cookies.accessToken;
+  const { payload } = verifyToken(accessToken);
 
-  console.log("Validated email: ", email);
-  await sendVerificationEmail(email);
+  if (!payload) throw new Error("Unauthorised");
+
+  const session = await Session.findById(payload.sessionId);
+  const user = await User.findById(session.userId);
+
+  console.log("Email: ", user.email);
+
+  const { value } = verificationCodeSchema.validate(user.email);
+  console.log("Value: ", value);
+
+  console.log("Validated email: ", value);
+  await sendVerificationEmail(value);
 
   return res.status(200).json({ message: "Verification email sent" });
 });

@@ -30,6 +30,17 @@ export const verifyEmail = async (code) => {
   }
 };
 
+export const resendVerificationEmail = async () => {
+  try {
+    const response = await axiosInstance.post(`/auth/send-verification-email`);
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to resend verification email"
+    );
+  }
+};
+
 export const sendResetPasswordEmail = async (email) => {
   try {
     const response = await axiosInstance.post("/auth/forgot-password", {
