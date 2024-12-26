@@ -5,6 +5,7 @@ import {
   loginUser,
   refreshUserAccessToken,
   resetPassword,
+  sendVerificationEmail,
   verifyEmail,
 } from "../services/authService.js";
 import catchErrors from "../utils/catchErrors.js";
@@ -105,6 +106,16 @@ export const verifyEmailHandler = catchErrors(async (req, res) => {
   await verifyEmail(code);
 
   return res.status(200).json({ message: "Email verified" });
+});
+
+export const sendVerificationEmailHandler = catchErrors(async (req, res) => {
+  const { value } = emailSchema.validate(req.body);
+  const { email } = value;
+
+  console.log("Validated email: ", email);
+  await sendVerificationEmail(email);
+
+  return res.status(200).json({ message: "Verification email sent" });
 });
 
 export const forgotPasswordHandler = catchErrors(async (req, res) => {

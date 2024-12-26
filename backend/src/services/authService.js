@@ -181,7 +181,7 @@ export const verifyEmail = async (code) => {
   return user;
 };
 
-export const forgotPassword = async (email) => {
+export const sendVerificationEmail = async (email) => {
   // get user by email
   const user = await User.findOne({ email });
   if (!user) throw new Error("Invalid email");
@@ -191,6 +191,40 @@ export const forgotPassword = async (email) => {
   const count = await VerificationCode.countDocuments({
     userId: user._id,
     type: "EmailVerification",
+    createdAt: { $gt: fiveMinsAgo },
+  });
+
+  if (count >= 1) throw new Error("Email rate limit exceeded");
+
+  // create verification code
+  const verificationCode = new VerificationCode({
+    userId: user._id,
+    type: "EmailVerification",
+    expiresAt: sevenDaysFromNow(),
+  });
+
+  await verificationCode.save();
+
+  // send verification email
+  const url = `${APP_ORIGIN}/api/auth/verify-email/${verificationCode._id}`;
+  await sendEmail({
+    to: user.email,
+    ...getVerifyEmailTemplate(url),
+  });
+
+  return url;
+};
+
+export const forgotPassword = async (email) => {
+  // get user by email
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("Invalid email");
+
+  // check email rate limit
+  const fiveMinsAgo = fiveMinutesAgo();
+  const count = await VerificationCode.countDocuments({
+    userId: user._id,
+    type: "PasswordReset",
     createdAt: { $gt: fiveMinsAgo },
   });
 
