@@ -206,7 +206,7 @@ export const sendVerificationEmail = async (email) => {
   await verificationCode.save();
 
   // send verification email
-  const url = `${APP_ORIGIN}/api/auth/verify-email/${verificationCode._id}`;
+  const url = `${APP_ORIGIN}/verify-email/${verificationCode._id}`;
   await sendEmail({
     to: user.email,
     ...getVerifyEmailTemplate(url),
@@ -241,7 +241,7 @@ export const forgotPassword = async (email) => {
   await verificationCode.save();
 
   // send password reset email
-  const url = `${APP_ORIGIN}/api/auth/reset-password?code=${
+  const url = `${APP_ORIGIN}/reset-password?code=${
     verificationCode._id
   }&exp=${expiresAt.getTime()}`;
 
