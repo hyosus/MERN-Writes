@@ -9,6 +9,14 @@ export const getUser = async () => {
   }
 };
 
+export const logout = async () => {
+  try {
+    await axiosInstance.get("/auth/logout");
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to logout");
+  }
+};
+
 export const login = async ({ email, password }) => {
   try {
     const response = await axiosInstance.post("/auth/login", {

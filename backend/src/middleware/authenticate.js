@@ -1,6 +1,7 @@
+import catchErrors from "../utils/catchErrors.js";
 import { verifyToken } from "../utils/jwt.js";
 
-export const authenticate = async (req, res, next) => {
+export const authenticate = catchErrors(async (req, res, next) => {
   const accessToken = req.cookies.accessToken;
   if (!accessToken) throw new Error("Not authorized");
 
@@ -13,4 +14,4 @@ export const authenticate = async (req, res, next) => {
   req.userId = payload.userId;
   req.sessionId = payload.sessionId;
   next();
-};
+});

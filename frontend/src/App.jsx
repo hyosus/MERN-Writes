@@ -5,18 +5,24 @@ import VerifyEmailPage from "./pages/VerifyEmailPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AppContainer from "./components/AppContainer";
-import Topbar from "./components/Topbar";
+import ProfilePage from "./pages/ProfilePage";
+import MainLayout from "./layouts/MainLayout";
 
 export const Home = () => {
-  return <Topbar />;
+  return <div>Home</div>;
 };
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<AppContainer />}>
-        <Route index element={<Home />} />
+        <Route element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="profile" element={<ProfilePage />} />
+          {/* <Route path="settings" element={<SettingsPage />} /> */}
+        </Route>
       </Route>
+
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/verify-email/:code" element={<VerifyEmailPage />} />

@@ -1,6 +1,10 @@
+import ProfileMenu from "./ProfileMenu";
+
 function Topbar() {
   return (
-    <div className="h-[40px] w-full text-white bg-zinc-900 mb-4">Topbar</div>
+    <div className="flex items-center justify-end p-4 h-[60px] w-full text-white bg-zinc-900 rounded-xl">
+      <ProfileMenu />
+    </div>
   );
 }
 
