@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
@@ -8,12 +8,15 @@ import AppContainer from "./components/AppContainer";
 import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
 import SettingsPage from "./pages/SettingsPage";
+import { setNavigate } from "./lib/navigation";
 
 export const Home = () => {
   return <div>Home</div>;
 };
 
 function App() {
+  const navigate = useNavigate();
+  setNavigate(navigate);
   return (
     <Routes>
       <Route path="/" element={<AppContainer />}>

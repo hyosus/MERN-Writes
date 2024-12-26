@@ -20,7 +20,7 @@ const SettingsPage = () => {
       minute: "2-digit",
     });
     return (
-      <Card key={_id} className="w-[98%]">
+      <Card key={_id} className="w-[98%] bg-transparent border-white/30">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>
             {formattedCreatedAt}{" "}
@@ -44,9 +44,11 @@ const SettingsPage = () => {
       {isError && <p className="text-red-600">Failed to fetch sessions</p>}
       {sessions && (
         <ScrollArea className="h-full w-[60%]">
-          {sessions.map((session) => (
-            <SessionCard key={session._id} session={session} />
-          ))}
+          <div className="flex flex-col gap-2">
+            {sessions.map((session) => (
+              <SessionCard key={session._id} session={session} />
+            ))}
+          </div>
         </ScrollArea>
       )}
     </div>
