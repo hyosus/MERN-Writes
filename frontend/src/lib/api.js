@@ -1,5 +1,14 @@
 import axiosInstance from "./axios";
 
+export const getUser = async () => {
+  try {
+    const response = await axiosInstance.get("/user");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get user");
+  }
+};
+
 export const login = async ({ email, password }) => {
   try {
     const response = await axiosInstance.post("/auth/login", {

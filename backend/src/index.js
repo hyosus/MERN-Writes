@@ -33,7 +33,6 @@ app.get(
     throw new Error("This is an error test");
   })
 );
-app.use(errorHandler);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", noteRoutes);
@@ -42,6 +41,8 @@ app.use("/api/folders", folderRoutes);
 // protected routes
 app.use("/api/user", authenticate, userRoutes);
 app.use("/api/sessions", authenticate, sessionRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log("Server is running on port ", PORT);
