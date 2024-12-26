@@ -109,7 +109,7 @@ export const verifyEmailHandler = catchErrors(async (req, res) => {
 });
 
 export const sendVerificationEmailHandler = catchErrors(async (req, res) => {
-  const { value } = emailSchema.validate(req.body);
+  const { value } = verificationCodeSchema.validate(req.params);
   const { email } = value;
 
   console.log("Validated email: ", email);

@@ -17,7 +17,7 @@ router.post("/login", loginHandler);
 router.get("/logout", logoutHandler);
 router.get("/refresh", refreshHandler);
 router.get("/verify-email/:code", verifyEmailHandler);
-router.post("/send-verification-email", sendVerificationEmailHandler);
+router.post("/send-verification-email/:email", sendVerificationEmailHandler);
 router.post("/forgot-password", forgotPasswordHandler);
 router.post("/reset-password", resetPasswordHandler);
 
