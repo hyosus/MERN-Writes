@@ -54,3 +54,17 @@ export const sendResetPasswordEmail = async (email) => {
     );
   }
 };
+
+export const resetPassword = async ({ verificationCode, password }) => {
+  try {
+    const response = await axiosInstance.post("/auth/reset-password", {
+      verificationCode,
+      password,
+    });
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to reset password"
+    );
+  }
+};
