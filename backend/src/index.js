@@ -35,12 +35,12 @@ app.get(
 );
 
 app.use("/api/auth", authRoutes);
-app.use("/api/notes", noteRoutes);
-app.use("/api/folders", folderRoutes);
 
 // protected routes
 app.use("/api/user", authenticate, userRoutes);
 app.use("/api/sessions", authenticate, sessionRoutes);
+app.use("/api/notes", authenticate, noteRoutes);
+app.use("/api/folders", authenticate, folderRoutes);
 
 app.use(errorHandler);
 
