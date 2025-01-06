@@ -105,3 +105,21 @@ export const deleteSession = async (sessionId) => {
     );
   }
 };
+
+// export const getAllNotes = async () => {
+//   try {
+//     const response = await axiosInstance.get("/notes");
+//     return response;
+//   } catch (error) {
+//     throw new Error(error.response?.data?.message || "Failed to get notes");
+//   }
+// };
+
+export const getNotesWithoutFolder = async () => {
+  try {
+    const response = await axiosInstance.get("/notes/no-folder");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get notes");
+  }
+};

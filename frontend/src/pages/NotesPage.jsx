@@ -11,7 +11,7 @@ import {
 import { File, Folder, Plus } from "lucide-react";
 import React, { useState } from "react";
 
-function NotesPage() {
+const NotesPage = () => {
   const [filter, setFilter] = useState("All");
 
   const handleFilterChange = (newFilter) => {
@@ -19,16 +19,17 @@ function NotesPage() {
   };
 
   return (
-    <main className="text-white bg-zinc-900 w-full h-[calc(100vh-40px-3rem)] rounded-lg p-6">
+    <>
       <FilterBar filter={filter} onFilterChange={handleFilterChange} />
 
       <div className="flex flex-col h-full">
-        {filter === "All" || filter === "Folder" ? (
+        <NotesDocument filter={filter} />
+        {/* {filter === "All" || filter === "Folder" ? (
           <NotesFolder filter={filter} />
         ) : null}
         {filter === "All" || filter === "Document" ? (
           <NotesDocument filter={filter} />
-        ) : null}
+        ) : null} */}
       </div>
       <div className="fixed bottom-14 right-14">
         <DropdownMenu modal={false}>
@@ -52,8 +53,8 @@ function NotesPage() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </main>
+    </>
   );
-}
+};
 
 export default NotesPage;

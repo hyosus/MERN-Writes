@@ -9,6 +9,7 @@ import ProfilePage from "./pages/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
 import SettingsPage from "./pages/SettingsPage";
 import { setNavigate } from "./lib/navigation";
+import NotesPage from "./pages/NotesPage";
 
 export const Home = () => {
   return <div>Home</div>;
@@ -24,6 +25,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="notes" element={<NotesPage />} />
         </Route>
       </Route>
 

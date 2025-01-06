@@ -10,7 +10,7 @@ const router = Router();
 
 router.post("/", createNote);
 router.get("/", getAllNotes);
-router.get("/notes-no-folder", getNotesWithoutFolder);
+router.get("/no-folder", getNotesWithoutFolder);
 router.put("/:id", updateNote);
 
 export default router;

@@ -21,7 +21,7 @@ function LeftSidebar() {
           </Button>
         </Link>
 
-        <Link to="notes" className="px-4">
+        <Link to="/notes" className="px-4">
           <Button
             variant="ghost"
             className="w-full h-12 hover:bg-zinc-800  flex items-center justify-start text-left hover:text-white"
