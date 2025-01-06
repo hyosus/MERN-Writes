@@ -2,7 +2,7 @@ import { Note } from "../models/noteModel.js";
 import { noteSchema } from "./noteSchema.js";
 import catchErrors from "../utils/catchErrors.js";
 
-export const createNote = catchErrors(async (req, res, next) => {
+export const createNote = catchErrors(async (req, res) => {
   const { error, value } = noteSchema.validate(req.body);
   const { title, content, folder } = value;
 
@@ -31,7 +31,7 @@ export const createNote = catchErrors(async (req, res, next) => {
   res.status(201).json(note);
 });
 
-export const getAllNotes = catchErrors(async (req, res, next) => {
+export const getAllNotes = catchErrors(async (req, res) => {
   // get current user
   const user = req.userId;
   if (!user) {
@@ -43,7 +43,7 @@ export const getAllNotes = catchErrors(async (req, res, next) => {
   res.status(200).json(notes);
 });
 
-export const getNotesWithoutFolder = async (req, res, next) => {
+export const getNotesWithoutFolder = catchErrors(async (req, res) => {
   // get current user
   const user = req.userId;
   if (!user) {
@@ -52,9 +52,9 @@ export const getNotesWithoutFolder = async (req, res, next) => {
   }
   const notes = await Note.find({ userId: user, folder: null });
   res.status(200).json(notes);
-};
+});
 
-export const updateNote = async (req, res, next) => {
+export const updateNote = catchErrors(async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content, folder } = req.body;
@@ -73,6 +73,6 @@ export const updateNote = async (req, res, next) => {
     res.status(200).json(note);
   } catch (error) {
     console.log("Error in updating note: ", error);
-    next(error);
+    error;
   }
-};
+});
