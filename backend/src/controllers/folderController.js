@@ -1,7 +1,8 @@
+import catchErrors from "../utils/catchErrors.js";
 import { Folder } from "../models/folderModel.js";
 import { folderSchema } from "./folderSchema.js";
 
-export const createFolder = async (req, res, next) => {
+export const createFolder = catchErrors(async (req, res) => {
   // validate request
   const { error, value } = folderSchema.validate(req.body);
   if (error) {
@@ -32,34 +33,40 @@ export const createFolder = async (req, res, next) => {
 
   await newFolder.save();
   res.status(201).json(newFolder);
-};
+});
 
-export const getAllFolders = async (req, res, next) => {
-  try {
-    const folders = await Folder.find();
-    res.status(200).json(folders);
-  } catch (error) {
-    console.log("Error in getting all folders: ", error);
-    next(error);
+export const getAllFolders = catchErrors(async (req, res) => {
+  // get user
+  const user = req.userId;
+  if (!user) {
+    res.status(400).json({ message: "Unauthorised" });
+    throw new Error("Unauthorised");
   }
-};
 
-export const getNotesFolder = async (req, res, next) => {
-  try {
-    const folder = await Folder.find({ type: "Note" });
-    res.status(200).json(folder);
-  } catch (error) {
-    console.log("Error in getting notes folder: ", error);
-    next(error);
-  }
-};
+  const folders = await Folder.find({ userId: user });
+  res.status(200).json(folders);
+});
 
-export const getJournalFolder = async (req, res, next) => {
-  try {
-    const folder = await Folder.find({ type: "Journal" });
-    res.status(200).json(folder);
-  } catch (error) {
-    console.log("Error in getting journal folder: ", error);
-    next(error);
+export const getNotesFolder = catchErrors(async (req, res) => {
+  // get user
+  const user = req.userId;
+  if (!user) {
+    res.status(400).json({ message: "Unauthorised" });
+    throw new Error("Unauthorised");
   }
-};
+
+  const folder = await Folder.find({ userId: user, type: "Note" });
+  res.status(200).json(folder);
+});
+
+export const getJournalFolder = catchErrors(async (req, res) => {
+  // get user
+  const user = req.userId;
+  if (!user) {
+    res.status(400).json({ message: "Unauthorised" });
+    throw new Error("Unauthorised");
+  }
+
+  const folder = await Folder.find({ userId: user, type: "Journal" });
+  res.status(200).json(folder);
+});
