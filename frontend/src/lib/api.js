@@ -123,3 +123,12 @@ export const getNotesWithoutFolder = async () => {
     throw new Error(error.response?.data?.message || "Failed to get notes");
   }
 };
+
+export const getNoteFolders = async () => {
+  try {
+    const response = await axiosInstance.get("/folders/note");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get folders");
+  }
+};

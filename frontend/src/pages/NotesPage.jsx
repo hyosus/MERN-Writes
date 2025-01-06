@@ -23,13 +23,13 @@ const NotesPage = () => {
       <FilterBar filter={filter} onFilterChange={handleFilterChange} />
 
       <div className="flex flex-col h-full">
-        <NotesDocument filter={filter} />
-        {/* {filter === "All" || filter === "Folder" ? (
+        {/* <NotesDocument filter={filter} /> */}
+        {filter === "All" || filter === "Folder" ? (
           <NotesFolder filter={filter} />
         ) : null}
         {filter === "All" || filter === "Document" ? (
           <NotesDocument filter={filter} />
-        ) : null} */}
+        ) : null}
       </div>
       <div className="fixed bottom-14 right-14">
         <DropdownMenu modal={false}>
