@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { File, Folder, Plus } from "lucide-react";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const NotesPage = () => {
   const [filter, setFilter] = useState("All");
@@ -42,10 +43,12 @@ const NotesPage = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-5">
-            <DropdownMenuItem className="hover:bg-zinc-200 text-lg cursor-pointer">
-              <File />
-              Note
-            </DropdownMenuItem>
+            <Link to="/tiptap">
+              <DropdownMenuItem className="hover:bg-zinc-200 text-lg cursor-pointer">
+                <File />
+                Note
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem className="hover:bg-zinc-200 text-lg cursor-pointer">
               <Folder />
               Folder

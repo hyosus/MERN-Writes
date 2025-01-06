@@ -10,6 +10,7 @@ import MainLayout from "./layouts/MainLayout";
 import SettingsPage from "./pages/SettingsPage";
 import { setNavigate } from "./lib/navigation";
 import NotesPage from "./pages/NotesPage";
+import Tiptap from "./pages/CreateNotePage";
 
 export const Home = () => {
   return <div>Home</div>;
@@ -26,6 +27,7 @@ function App() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="notes" element={<NotesPage />} />
+          <Route path="tiptap" element={<Tiptap />} />
         </Route>
       </Route>
 
