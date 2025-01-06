@@ -44,13 +44,14 @@ export const getAllNotes = catchErrors(async (req, res, next) => {
 });
 
 export const getNotesWithoutFolder = async (req, res, next) => {
-  try {
-    const notes = await Note.find({ folder: null });
-    res.status(200).json(notes);
-  } catch (error) {
-    console.log("Error in getting notes without folder: ", error);
-    next(error);
+  // get current user
+  const user = req.userId;
+  if (!user) {
+    res.status(401).json({ message: "Unauthorized" });
+    throw new Error("Unauthorized");
   }
+  const notes = await Note.find({ userId: user, folder: null });
+  res.status(200).json(notes);
 };
 
 export const updateNote = async (req, res, next) => {

@@ -1,4 +1,38 @@
 import { Folder } from "../models/folderModel.js";
+import { folderSchema } from "./folderSchema.js";
+
+export const createFolder = async (req, res, next) => {
+  // validate request
+  const { error, value } = folderSchema.validate(req.body);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in creating folder");
+  }
+
+  // get user
+  const user = req.userId;
+  if (!user) {
+    res.status(400).json({ message: "Unauthorised" });
+    throw new Error("Unauthorised");
+  }
+
+  const { name, type, note, journal } = value;
+  if (!name || !type) {
+    res.status(400).json({ message: "Name and type are required" });
+    throw new Error("Error in creating folder");
+  }
+
+  const newFolder = new Folder({
+    userId: user,
+    name: name,
+    type: type,
+    note: note || null,
+    journal: journal || null,
+  });
+
+  await newFolder.save();
+  res.status(201).json(newFolder);
+};
 
 export const getAllFolders = async (req, res, next) => {
   try {
@@ -6,27 +40,6 @@ export const getAllFolders = async (req, res, next) => {
     res.status(200).json(folders);
   } catch (error) {
     console.log("Error in getting all folders: ", error);
-    next(error);
-  }
-};
-
-export const createFolder = async (req, res, next) => {
-  try {
-    const { name, type, note, journal } = req.body;
-
-    if (!name || !type)
-      res.status(400).json({ message: "Name and type are required" });
-
-    const newFolder = new Folder({
-      name,
-      type,
-      note: note || null,
-      journal: journal || null,
-    });
-
-    await newFolder.save();
-  } catch (error) {
-    console.log("Error in creating folder: ", error);
     next(error);
   }
 };
