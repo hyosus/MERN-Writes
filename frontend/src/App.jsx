@@ -1,17 +1,17 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import VerifyEmailPage from "./pages/VerifyEmailPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 import AppContainer from "./components/AppContainer";
-import ProfilePage from "./pages/ProfilePage";
+import ProfilePage from "./pages/auth/ProfilePage";
 import MainLayout from "./layouts/MainLayout";
-import SettingsPage from "./pages/SettingsPage";
+import SettingsPage from "./pages/auth/SettingsPage";
 import { setNavigate } from "./lib/navigation";
-import NotesPage from "./pages/NotesPage";
-import Tiptap from "./pages/CreateNotePage";
-import UpdateNotePage from "./pages/UpdateNotePage";
+import NotesPage from "./pages/note/NotesPage";
+import Tiptap from "./pages/note/CreateNotePage";
+import UpdateNotePage from "./pages/note/UpdateNotePage";
 
 export const Home = () => {
   return <div>Home</div>;
