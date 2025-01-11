@@ -5,6 +5,10 @@ import { Link } from "react-router-dom";
 const NotesDocument = ({ filter }) => {
   const { notes, isLoading, isError } = useNotesWithoutFolder();
 
+  const handleDragStart = (e, noteId) => {
+    e.dataTransfer.setData("noteId", noteId);
+  };
+
   const NoteBlock = ({ note }) => {
     const formattedDate = new Date(note.createdAt).toLocaleDateString("en-GB", {
       day: "2-digit",
@@ -16,7 +20,7 @@ const NotesDocument = ({ filter }) => {
 
     return (
       <Link to={`/notes/${note._id}`}>
-        <li>
+        <li draggable onDragStart={(e) => handleDragStart(e, note._id)}>
           <div className="text-black bg-white rounded-xl p-4 h-52">
             <p className="text-xs">{formattedDate}</p>
             <h1 className="font-bold text-xl truncate pt-1 pb-3">

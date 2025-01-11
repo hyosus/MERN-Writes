@@ -1,6 +1,7 @@
 import { Note } from "../models/noteModel.js";
 import { noteIdSchema, noteSchema } from "./noteSchema.js";
 import catchErrors from "../utils/catchErrors.js";
+import mongoose from "mongoose";
 
 export const createNote = catchErrors(async (req, res) => {
   const { error, value } = noteSchema.validate(req.body);
@@ -63,7 +64,7 @@ export const getNote = catchErrors(async (req, res) => {
     throw new Error("Error in getting note");
   }
 
-  const note = await Note.findById(value);
+  const note = await Note.findById(id);
   if (!note) {
     res.status(404).json({ message: "Note not found" });
     throw new Error("Note not found");
@@ -75,7 +76,7 @@ export const getNote = catchErrors(async (req, res) => {
 export const updateNote = catchErrors(async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, content, folder } = req.body;
+    const { title, content } = req.body;
 
     const note = await Note.findById(id);
 
@@ -85,12 +86,30 @@ export const updateNote = catchErrors(async (req, res) => {
 
     if (title) note.title = title;
     if (content) note.content = content;
-    if (folder) note.folder = folder;
 
     await note.save();
     res.status(200).json(note);
   } catch (error) {
     console.log("Error in updating note: ", error);
-    error;
+  }
+});
+
+export const addNoteToFolder = catchErrors(async (req, res) => {
+  try {
+    const { noteId, folderId } = req.body;
+    console.log("noteId: ", noteId);
+
+    const note = await Note.findById(noteId);
+
+    if (!note) {
+      res.status(404).json({ message: "Note not found" });
+      throw new Error("Note not found");
+    }
+
+    note.folder = folderId;
+    await note.save();
+    res.status(200).json(note);
+  } catch (error) {
+    console.log("Error in adding note to folder: ", error);
   }
 });

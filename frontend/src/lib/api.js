@@ -162,3 +162,24 @@ export const updateNote = async ({ id, content, title }) => {
     throw new Error(error.response?.data?.message || "Failed to update note");
   }
 };
+
+export const addNoteToFolder = async ({ folderId, name, type, note }) => {
+  try {
+    const response = await axiosInstance.put(`/folders/add-note/${folderId}`, {
+      name,
+      type,
+      note,
+    });
+
+    const response2 = await axiosInstance.put(`/notes/add-folder`, {
+      noteId: note[0],
+      folderId: folderId,
+    });
+
+    return { response, response2 };
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to update note folder"
+    );
+  }
+};

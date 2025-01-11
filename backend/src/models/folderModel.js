@@ -15,16 +15,20 @@ const folderSchema = new mongoose.Schema(
       required: true,
       enum: ["Note", "Journal"], // Only allow "Note" or "Journal"
     },
-    note: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Note",
-      required: false,
-    },
-    journal: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Journal",
-      required: false,
-    },
+    notes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Note",
+        required: false,
+      },
+    ],
+    journals: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Journal",
+        required: false,
+      },
+    ],
   },
   { timestamps: true }
 );

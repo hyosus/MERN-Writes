@@ -70,3 +70,32 @@ export const getJournalFolder = catchErrors(async (req, res) => {
   const folder = await Folder.find({ userId: user, type: "Journal" });
   res.status(200).json(folder);
 });
+
+export const addNoteToFolder = catchErrors(async (req, res) => {
+  const { error, value } = folderSchema.validate(req.body);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in updating folder");
+  }
+
+  const folder = await Folder.findById(req.params.id);
+  if (!folder) {
+    res.status(404).json({ message: "Folder not found" });
+    throw new Error("Folder not found");
+  }
+
+  const { note, name, type } = value;
+  if (name) folder.name = name;
+  if (type) folder.type = type;
+
+  // Add notes to the folder
+  if (Array.isArray(note)) {
+    folder.notes = [...folder.notes, ...note];
+  } else if (note) {
+    folder.notes.push(note);
+  }
+  // folder.notes = [...folder.notes, ...note];
+  await folder.save();
+
+  res.status(200).json(folder);
+});
