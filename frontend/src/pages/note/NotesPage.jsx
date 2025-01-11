@@ -43,7 +43,7 @@ const NotesPage = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-5">
-            <Link to="/tiptap">
+            <Link to="/create-note">
               <DropdownMenuItem className="hover:bg-zinc-200 text-lg cursor-pointer">
                 <File />
                 Note

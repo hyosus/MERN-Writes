@@ -29,7 +29,7 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="notes" element={<NotesPage />} />
           <Route path="notes/:noteId" element={<UpdateNotePage />} />
-          <Route path="tiptap" element={<Tiptap />} />
+          <Route path="create-note" element={<Tiptap />} />
         </Route>
       </Route>
 
