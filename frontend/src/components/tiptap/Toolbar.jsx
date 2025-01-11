@@ -8,8 +8,8 @@ import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { useCurrentEditor } from "@tiptap/react";
 import { Bold, Check, ChevronDown, Italic, Strikethrough } from "lucide-react";
 
-export const MenuBar = () => {
-  const { editor } = useCurrentEditor();
+export const ToolBar = ({ editor }) => {
+  // const { editor } = useCurrentEditor();
 
   if (!editor) {
     return null;
@@ -25,7 +25,7 @@ export const MenuBar = () => {
   };
 
   return (
-    <div className="flex gap-3 pb-4">
+    <div className="flex flex-shrink-0 items-start gap-3 pb-2">
       <Button
         variant="outline"
         size="icon"

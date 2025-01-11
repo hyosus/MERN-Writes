@@ -132,3 +132,24 @@ export const getNoteFolders = async () => {
     throw new Error(error.response?.data?.message || "Failed to get folders");
   }
 };
+
+export const createNote = async (data) => {
+  try {
+    const response = await axiosInstance.post("/notes", data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to create note");
+  }
+};
+
+export const updateNote = async ({ id, content, title }) => {
+  try {
+    const response = await axiosInstance.put(`/notes/${id}`, {
+      content,
+      title,
+    });
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to update note");
+  }
+};
