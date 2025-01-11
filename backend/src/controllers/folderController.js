@@ -1,6 +1,6 @@
 import catchErrors from "../utils/catchErrors.js";
 import { Folder } from "../models/folderModel.js";
-import { folderSchema } from "./folderSchema.js";
+import { folderIdSchema, folderSchema } from "./folderSchema.js";
 
 export const createFolder = catchErrors(async (req, res) => {
   // validate request
@@ -45,6 +45,30 @@ export const getAllFolders = catchErrors(async (req, res) => {
 
   const folders = await Folder.find({ userId: user });
   res.status(200).json(folders);
+});
+
+export const getFolder = catchErrors(async (req, res) => {
+  const { error, value } = folderIdSchema.validate(req.params.id);
+
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in getting folder");
+  }
+
+  // get user
+  const user = req.userId;
+  if (!user) {
+    res.status(400).json({ message: "Unauthorised" });
+    throw new Error("Unauthorised");
+  }
+
+  const folder = await Folder.findById(value);
+  if (!folder) {
+    res.status(404).json({ message: "Folder not found" });
+    throw new Error("Folder not found");
+  }
+
+  res.status(200).json(folder);
 });
 
 export const getNotesFolder = catchErrors(async (req, res) => {

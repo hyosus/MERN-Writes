@@ -38,7 +38,7 @@ const NotesFolder = ({ filter }) => {
 
     return (
       <>
-        <Link to={`/folders/${folder._id}`}>
+        <Link to={`/folder/${folder._id}`}>
           <li onDrop={(e) => handleDrop(e, folder)} onDragOver={handleDragOver}>
             <div className="text-black bg-white rounded-xl p-4 min-w-[100px]">
               <FaFolder className="size-10"></FaFolder>

@@ -12,6 +12,7 @@ import { setNavigate } from "./lib/navigation";
 import NotesPage from "./pages/note/NotesPage";
 import Tiptap from "./pages/note/CreateNotePage";
 import UpdateNotePage from "./pages/note/UpdateNotePage";
+import FolderPage from "./pages/note/FolderPage";
 
 export const Home = () => {
   return <div>Home</div>;
@@ -30,6 +31,7 @@ function App() {
           <Route path="notes" element={<NotesPage />} />
           <Route path="notes/:noteId" element={<UpdateNotePage />} />
           <Route path="create-note" element={<Tiptap />} />
+          <Route path="folder/:folderId" element={<FolderPage />} />
         </Route>
       </Route>
 

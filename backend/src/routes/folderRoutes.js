@@ -5,6 +5,7 @@ import {
   getJournalFolder,
   getNotesFolder,
   addNoteToFolder,
+  getFolder,
 } from "../controllers/folderController.js";
 
 const router = Router();
@@ -12,6 +13,7 @@ const router = Router();
 router.get("/", getAllFolders);
 router.get("/note", getNotesFolder);
 router.get("/journal", getJournalFolder);
+router.get("/:id", getFolder);
 
 router.post("/", createFolder);
 

@@ -106,14 +106,15 @@ export const deleteSession = async (sessionId) => {
   }
 };
 
-// export const getAllNotes = async () => {
-//   try {
-//     const response = await axiosInstance.get("/notes");
-//     return response;
-//   } catch (error) {
-//     throw new Error(error.response?.data?.message || "Failed to get notes");
-//   }
-// };
+export const getNotesWithFolder = async (folderId) => {
+  try {
+    const response = await axiosInstance.get(`/notes/folder/${folderId}`);
+    console.log("FUCK", response);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get notes");
+  }
+};
 
 export const getNotesWithoutFolder = async () => {
   try {
@@ -190,5 +191,14 @@ export const createNoteFolder = async (data) => {
     return response;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to create folder");
+  }
+};
+
+export const getFolder = async (folderId) => {
+  try {
+    const response = await axiosInstance.get(`/folders/${folderId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get folder");
   }
 };
