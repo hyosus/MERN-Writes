@@ -183,3 +183,12 @@ export const addNoteToFolder = async ({ folderId, name, type, note }) => {
     );
   }
 };
+
+export const createNoteFolder = async (data) => {
+  try {
+    const response = await axiosInstance.post("/folders", data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to create folder");
+  }
+};
