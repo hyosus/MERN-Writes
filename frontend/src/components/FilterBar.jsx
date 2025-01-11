@@ -7,7 +7,7 @@ function FilterBar({ filter, onFilterChange }) {
   };
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-shrink-0 gap-4">
       <Button
         className={`rounded-2xl px-6 ${
           filter === "All"

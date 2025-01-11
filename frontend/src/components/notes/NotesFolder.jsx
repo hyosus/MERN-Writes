@@ -56,7 +56,9 @@ const NotesFolder = ({ filter }) => {
   return (
     <>
       <h1 className="text-2xl font-bold py-4">Folders</h1>
-      <ScrollArea className={filter === "Folder" ? "h-[85%]" : "h-fit"}>
+      <ScrollArea
+        className={filter === "Folder" ? "flex-grow h-full" : "flex-grow h-fit"}
+      >
         {folders && (
           <ul className="grid gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {folders.map((folder) => (
