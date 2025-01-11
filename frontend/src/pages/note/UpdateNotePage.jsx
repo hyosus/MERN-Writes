@@ -14,14 +14,14 @@ export default () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  console.log(content);
-
   useEffect(() => {
     if (note) {
-      setTitle(note.title);
-      setContent(note.content);
+      setTitle(note.title || " ");
+      setContent(note.content || " ");
     }
   }, [note]);
+
+  console.log(noteId, title, content);
 
   const { mutate: editNote } = useMutation({
     mutationFn: updateNote,

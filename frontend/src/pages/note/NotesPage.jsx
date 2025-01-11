@@ -109,34 +109,6 @@ const NotesPage = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-
-        {/* <Dialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <p>Trigger</p>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DialogTrigger>
-                <DropdownMenuItem>Delete</DropdownMenuItem>
-              </DialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Are you sure?</DialogTitle>
-              <DialogDescription>
-                Deleting this entry cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button>Delete</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog> */}
       </div>
     </>
   );
