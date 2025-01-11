@@ -15,27 +15,28 @@ const axiosInstance = axios.create(options);
 axiosInstance.interceptors.response.use(
   (response) => response.data,
   async (error) => {
-    const { status, data } = response;
-    console.log("Error: ", error);
-    console.log("Data: ", data);
+    const { status, data } = error.response;
 
-    // try to refresh the token
-    if (
-      (status === 401 && data.error === "InvalidAccessToken") ||
-      data.error === "Token expired"
-    ) {
-      try {
-        await TokenRefreshClient.get("/auth/refresh-token");
-        return TokenRefreshClient(error.config);
-      } catch (error) {
-        queryClient.clear();
-        navigate("/login", {
-          state: { redirectUrl: window.location.pathname },
-        });
-      }
-    }
     return Promise.reject({ status, ...data });
   }
 );
+
+// Function to periodically refresh the access token
+const refreshAccessTokenPeriodically = () => {
+  setInterval(async () => {
+    try {
+      await TokenRefreshClient.get("/auth/refresh");
+      console.log("Access token refreshed");
+    } catch (error) {
+      console.error("Error refreshing access token:", error);
+      queryClient.clear();
+      navigate("/login", {
+        state: { redirectUrl: window.location.pathname },
+      });
+    }
+  }, 14 * 60 * 1000); // Refresh every 14 minutes (before the 15-minute expiry)
+};
+
+refreshAccessTokenPeriodically();
 
 export default axiosInstance;
