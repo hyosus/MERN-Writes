@@ -1,5 +1,6 @@
 import useNotesWithoutFolder from "@/hooks/useNotesWithoutFolder";
 import { ScrollArea } from "../ui/scroll-area";
+import { Link } from "react-router-dom";
 
 const NotesDocument = ({ filter }) => {
   const { notes, isLoading, isError } = useNotesWithoutFolder();
@@ -11,19 +12,23 @@ const NotesDocument = ({ filter }) => {
       year: "numeric",
     });
 
+    const formattedContent = note.content.replace(/<[^>]*>?/gm, "");
+
     return (
-      <li>
-        <div className="text-black bg-white rounded-xl p-4 h-52">
-          <p className="text-xs">{formattedDate}</p>
-          <h1 className="font-bold text-xl truncate pt-1 pb-3">
-            {note.title ? note.title : note.content}
-          </h1>
-          <hr className="border-black/40" />
-          <p className="pt-3 text-md overflow-hidden text-ellipsis line-clamp-4">
-            {note.content}
-          </p>
-        </div>
-      </li>
+      <Link to={`/notes/${note._id}`}>
+        <li>
+          <div className="text-black bg-white rounded-xl p-4 h-52">
+            <p className="text-xs">{formattedDate}</p>
+            <h1 className="font-bold text-xl truncate pt-1 pb-3">
+              {note.title ? note.title : formattedContent}
+            </h1>
+            <hr className="border-black/40" />
+            <p className="pt-3 text-md overflow-hidden text-ellipsis line-clamp-4">
+              {formattedContent}
+            </p>
+          </div>
+        </li>
+      </Link>
     );
   };
 

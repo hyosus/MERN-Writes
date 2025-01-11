@@ -124,6 +124,15 @@ export const getNotesWithoutFolder = async () => {
   }
 };
 
+export const getNote = async (noteId) => {
+  try {
+    const response = await axiosInstance.get(`/notes/${noteId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get note");
+  }
+};
+
 export const getNoteFolders = async () => {
   try {
     const response = await axiosInstance.get("/folders/note");

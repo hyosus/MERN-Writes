@@ -1,4 +1,4 @@
-import { EditorContent, EditorProvider, useEditor } from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import { ToolBar } from "./Toolbar";
 import StarterKit from "@tiptap/starter-kit";
 import "./TipTap.css";
@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createNote, updateNote } from "@/lib/api.js";
 
-export const RichTextEditor = ({ noteId: initialNoteId }) => {
-  const [content, setContent] = useState("");
+export const RichTextEditor = ({ noteId: initialNoteId, initialContent }) => {
+  const [content, setContent] = useState(initialContent);
   const [noteId, setNoteId] = useState(initialNoteId); // Track the created note ID
 
   const { mutate: addNote } = useMutation({
@@ -30,7 +30,13 @@ export const RichTextEditor = ({ noteId: initialNoteId }) => {
     if (initialNoteId) {
       setNoteId(initialNoteId);
     }
-  }, [initialNoteId]);
+    if (initialContent) {
+      setContent(initialContent);
+      if (editor) {
+        editor.commands.setContent(initialContent);
+      }
+    }
+  }, [initialNoteId, initialContent]);
 
   const editor = useEditor({
     extensions: [
@@ -41,7 +47,7 @@ export const RichTextEditor = ({ noteId: initialNoteId }) => {
     ],
     content: content,
     onUpdate({ editor }) {
-      const updatedContent = editor.getText(); // get editor's content
+      const updatedContent = editor.getHTML(); // get editor's content
       setContent(updatedContent);
 
       if (noteId) {

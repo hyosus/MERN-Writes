@@ -1,5 +1,5 @@
 import { Note } from "../models/noteModel.js";
-import { noteSchema } from "./noteSchema.js";
+import { noteIdSchema, noteSchema } from "./noteSchema.js";
 import catchErrors from "../utils/catchErrors.js";
 
 export const createNote = catchErrors(async (req, res) => {
@@ -52,6 +52,24 @@ export const getNotesWithoutFolder = catchErrors(async (req, res) => {
   }
   const notes = await Note.find({ userId: user, folder: null });
   res.status(200).json(notes);
+});
+
+export const getNote = catchErrors(async (req, res) => {
+  const { id } = req.params;
+  const { error, value } = noteIdSchema.validate(id);
+
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in getting note");
+  }
+
+  const note = await Note.findById(value);
+  if (!note) {
+    res.status(404).json({ message: "Note not found" });
+    throw new Error("Note not found");
+  }
+
+  res.status(200).json(note);
 });
 
 export const updateNote = catchErrors(async (req, res) => {
