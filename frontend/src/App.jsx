@@ -30,6 +30,7 @@ function App() {
           <Route path="notes" element={<NotesPage />} />
           <Route path="notes/:noteId" element={<UpdateNotePage />} />
           <Route path="create-note" element={<Tiptap />} />
+          <Route path="journal" element={<Home />} />
         </Route>
       </Route>
 
