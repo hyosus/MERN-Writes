@@ -192,3 +192,12 @@ export const createNoteFolder = async (data) => {
     throw new Error(error.response?.data?.message || "Failed to create folder");
   }
 };
+
+export const getJournalMood = async () => {
+  try {
+    const response = await axiosInstance.get("/journals/mood");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get mood");
+  }
+};

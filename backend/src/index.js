@@ -13,6 +13,7 @@ import errorHandler from "./middleware/errorHandling.js";
 import catchErrors from "./utils/catchErrors.js";
 import { authenticate } from "./middleware/authenticate.js";
 import journalRoutes from "./routes/journalRoutes.js";
+import moodRoutes from "./routes/moodRoutes.js";
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use("/api/sessions", authenticate, sessionRoutes);
 app.use("/api/notes", authenticate, noteRoutes);
 app.use("/api/journals", authenticate, journalRoutes);
 app.use("/api/folders", authenticate, folderRoutes);
+app.use("/api/moods", authenticate, moodRoutes);
 
 app.use(errorHandler);
 

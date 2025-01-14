@@ -45,6 +45,15 @@ export const getJournal = catchErrors(async (req, res) => {
   res.status(200).json(journal);
 });
 
+export const getJournalMood = catchErrors(async (req, res) => {
+  const journals = await Journal.find({ userId: req.userId }).populate("mood");
+  if (!journals) {
+    res.status(404).json({ message: "Journals not found" });
+    throw new Error("Journals not found");
+  }
+  res.status(200).json(journals);
+});
+
 export const updateJournal = catchErrors(async (req, res) => {
   const { error, value } = journalIdSchema.validate(req.params.id);
   if (error) {

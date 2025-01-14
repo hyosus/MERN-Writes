@@ -15,7 +15,8 @@ const journalSchema = new Schema({
     required: false,
   },
   mood: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Mood",
     required: false,
   },
   folder: {
