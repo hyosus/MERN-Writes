@@ -42,17 +42,17 @@ const NotesDocument = ({ filter }) => {
       <h1 className="text-2xl font-bold py-4">Documents</h1>
 
       <ScrollArea
-        className={
-          filter === "Document" ? "flex-grow h-full" : "flex-grow h-fit"
-        }
+        className={filter === "Document" ? "flex-grow" : "flex-grow h-fit"}
       >
         {isLoading && <p>Loading...</p>}
-        {notes && (
+        {notes && notes.length > 0 ? (
           <ul className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {notes.map((note) => (
               <NoteBlock key={note.id} note={note} />
             ))}
           </ul>
+        ) : (
+          <p>No notes found</p>
         )}
       </ScrollArea>
     </>
