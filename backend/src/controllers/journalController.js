@@ -1,8 +1,13 @@
 import catchErrors from "../utils/catchErrors.js";
-import { journalIdSchema, journalSchema } from "./journalSchema.js";
+import {
+  journalDateSchema,
+  journalIdSchema,
+  journalSchema,
+} from "./journalSchema.js";
 import { Journal } from "../models/journalModel.js";
 
 export const createJournal = catchErrors(async (req, res) => {
+  console.log("1. Received date in backend:", req.body.date);
   const { error, value } = journalSchema.validate(req.body);
   if (error) {
     res.status(400).json({ message: error.details[0].message });
@@ -10,6 +15,21 @@ export const createJournal = catchErrors(async (req, res) => {
   }
 
   const { title, content, mood, folder, date } = value;
+  console.log("2. Date after validation:", date);
+
+  // Create a UTC date at noon on the specified date
+  // This ensures the date remains the same in all timezones
+  const [year, month, day] = date.split("-");
+  const utcDate = new Date(
+    Date.UTC(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(day),
+      12, // noon UTC
+      0,
+      0
+    )
+  );
 
   const journal = new Journal({
     userId: req.userId,
@@ -17,8 +37,11 @@ export const createJournal = catchErrors(async (req, res) => {
     content,
     mood,
     folder,
-    date,
+    date: utcDate,
   });
+
+  console.log("3. Date being saved to MongoDB:", journal.date);
+  console.log("4. Date in ISO format:", journal.date.toISOString());
 
   await journal.save();
   res.status(201).json(journal);
@@ -43,6 +66,14 @@ export const getJournal = catchErrors(async (req, res) => {
     throw new Error("Journal not found");
   }
   res.status(200).json(journal);
+});
+
+export const getJournalByDate = catchErrors(async (req, res) => {
+  const { error, value } = journalDateSchema.validate(req.params.date);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in getting journal");
+  }
 });
 
 export const getJournalMood = catchErrors(async (req, res) => {

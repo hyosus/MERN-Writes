@@ -15,6 +15,14 @@ export const createMood = catchErrors(async (req, res) => {
   res.status(201).json(mood);
 });
 
+export const getAllMoods = catchErrors(async (req, res) => {
+  // get default moods plus moods created by the user
+  const moods = await Mood.find({
+    $or: [{ isCustom: false || null }, { userId: req.userId }],
+  }).sort({ userId: -1 });
+  res.status(200).json(moods);
+});
+
 export const updateMood = catchErrors(async (req, res) => {
   const { error, value } = moodSchema.validate(req.body);
   if (error) {

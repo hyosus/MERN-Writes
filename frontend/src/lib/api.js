@@ -201,3 +201,32 @@ export const getJournalMood = async () => {
     throw new Error(error.response?.data?.message || "Failed to get mood");
   }
 };
+
+export const getAllMoods = async () => {
+  try {
+    const response = await axiosInstance.get("/moods");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get moods");
+  }
+};
+
+export const createEntry = async (data) => {
+  try {
+    const response = await axiosInstance.post("/journals", data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to add entry");
+  }
+};
+
+export const updateEntry = async ({ entryId, data }) => {
+  try {
+    console.log(`/journals/${entryId}`);
+    const response = await axiosInstance.put(`/journals/${entryId}`, data);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response?.data?.message || "Failed to edit entry");
+  }
+};
