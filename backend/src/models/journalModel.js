@@ -14,11 +14,13 @@ const journalSchema = new Schema({
     type: String,
     required: false,
   },
-  mood: {
-    type: Schema.Types.ObjectId,
-    ref: "Mood",
-    required: false,
-  },
+  mood: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Mood",
+      required: false,
+    },
+  ],
   folder: {
     type: Schema.Types.ObjectId,
     ref: "Folder",

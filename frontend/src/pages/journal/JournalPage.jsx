@@ -3,6 +3,8 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./customCalendar.css";
 import useJournalMoods from "@/hooks/useJournalMood";
+import { FaHeart } from "react-icons/fa6";
+import { format, isSameDay } from "date-fns";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
@@ -10,18 +12,22 @@ const JournalPage = () => {
 
   const tileContent = ({ date, view }) => {
     if (view === "month" && journalMoods) {
-      const mood = journalMoods.find(
-        (mood) => mood.date.split("T")[0] === date.toISOString().split("T")[0]
+      const journalEntries = journalMoods.filter((entry) =>
+        isSameDay(new Date(entry.date), date)
       );
-      if (mood) {
+      const allMoods = journalEntries.flatMap((entry) => entry.mood);
+
+      if (allMoods.length > 0) {
         return (
-          <div
-            style={{
-              backgroundColor: mood.mood.colour,
-              width: "100%",
-              height: "100%",
-            }}
-          ></div>
+          <div className="absolute top-0 left-0 flex items-end justify-center w-full h-full gap-1 p-3">
+            {allMoods.map((moodItem, index) => (
+              <FaHeart
+                key={index}
+                size="20%"
+                style={{ color: moodItem.colour }}
+              />
+            ))}
+          </div>
         );
       }
     }

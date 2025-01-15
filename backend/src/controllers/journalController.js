@@ -51,7 +51,26 @@ export const getJournalMood = catchErrors(async (req, res) => {
     res.status(404).json({ message: "Journals not found" });
     throw new Error("Journals not found");
   }
-  res.status(200).json(journals);
+
+  // Process the results to filter out duplicate moods for each date
+  const uniqueMoodsByDate = journals.reduce((acc, journal) => {
+    const date = journal.date.toISOString().split("T")[0];
+    if (!acc[date]) {
+      acc[date] = new Set();
+    }
+    journal.mood.forEach((mood) => {
+      acc[date].add(JSON.stringify(mood)); // Use JSON.stringify to handle object comparison
+    });
+    return acc;
+  }, {});
+
+  // Convert the sets back to arrays and parse the JSON strings
+  const result = Object.entries(uniqueMoodsByDate).map(([date, moods]) => ({
+    date,
+    mood: Array.from(moods).map((mood) => JSON.parse(mood)),
+  }));
+
+  res.status(200).json(result);
 });
 
 export const updateJournal = catchErrors(async (req, res) => {
