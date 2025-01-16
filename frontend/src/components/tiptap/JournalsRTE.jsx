@@ -5,14 +5,12 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { useMutation } from "@tanstack/react-query";
 import { createEntry, updateEntry } from "@/lib/api.js";
+import queryClient from "@/lib/queryClient";
+import { JOURNALS } from "@/hooks/useJournal";
 
-const JournalsRTE = ({ date, initialId }) => {
-  const [content, setContent] = useState("");
+const JournalsRTE = ({ date, initialId, initialContent }) => {
+  const [content, setContent] = useState(initialContent || "");
   const [entryId, setEntryId] = useState(initialId); // Track the created entry ID
-
-  useEffect(() => {
-    setEntryId(initialId);
-  }, [initialId]);
 
   const editor = useEditor({
     extensions: [
@@ -21,7 +19,7 @@ const JournalsRTE = ({ date, initialId }) => {
         placeholder: "Write something …",
       }),
     ],
-    content: content,
+    content: initialContent || "",
     onUpdate({ editor }) {
       const updatedContent = editor.getHTML(); // get editor's content
       setContent(updatedContent);
@@ -47,12 +45,19 @@ const JournalsRTE = ({ date, initialId }) => {
   const { mutate: editEntry } = useMutation({
     mutationFn: updateEntry,
     onSuccess: (data) => {
+      queryClient.invalidateQueries([JOURNALS]);
       console.log("Entry updated: ", data);
     },
     onError: (error) => {
       console.error("Error updating entry: ", error);
     },
   });
+
+  useEffect(() => {
+    if (editor && initialContent) {
+      editor.commands.setContent(initialContent);
+    }
+  }, [editor, initialContent]);
 
   return (
     <div className="CONTAINER flex flex-col h-full flex-grow-1">

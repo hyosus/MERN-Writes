@@ -1,4 +1,4 @@
-import { getAllEntries, getEntriesByDate } from "@/lib/api.js";
+import { getAllEntries } from "@/lib/api.js";
 import { useQuery } from "@tanstack/react-query";
 
 export const JOURNALS = "journals";

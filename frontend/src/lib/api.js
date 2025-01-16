@@ -240,12 +240,12 @@ export const getAllEntries = async () => {
   }
 };
 
-export const getEntriesByDate = async (date) => {
+export const getEntry = async (entryId) => {
   try {
-    const response = await axiosInstance.get(`/journals/date/${date}`);
+    const response = await axiosInstance.get(`/journals/${entryId}`);
     return response;
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Failed to get entries");
+    throw new Error(error.response?.data?.message || "Failed to get entry");
   }
 };
 

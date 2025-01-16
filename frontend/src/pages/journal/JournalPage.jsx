@@ -60,9 +60,10 @@ const JournalPage = () => {
     isSameDay(new Date(journal.date), selectedDate)
   );
 
-  const filteredMoods = journalMoods.filter((entry) =>
-    isSameDay(new Date(entry.date), selectedDate)
-  );
+  const filteredMoods =
+    journalMoods?.filter((entry) =>
+      isSameDay(new Date(entry.date), selectedDate)
+    ) || [];
 
   return (
     <>

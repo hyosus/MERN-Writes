@@ -14,6 +14,7 @@ import Tiptap from "./pages/note/CreateNotePage";
 import UpdateNotePage from "./pages/note/UpdateNotePage";
 import JournalPage from "./pages/journal/JournalPage";
 import CreateEntryPage from "./pages/journal/CreateEntryPage";
+import EditEntryPage from "./pages/journal/EditEntryPage";
 
 export const Home = () => {
   return <div>Home</div>;
@@ -33,6 +34,7 @@ function App() {
           <Route path="notes/:noteId" element={<UpdateNotePage />} />
           <Route path="create-note" element={<Tiptap />} />
           <Route path="journal" element={<JournalPage />} />
+          <Route path="journal/:entryId" element={<EditEntryPage />} />
           <Route path="create-entry/:date" element={<CreateEntryPage />} />
         </Route>
       </Route>
