@@ -21,6 +21,24 @@ import queryClient from "@/lib/queryClient";
 import { CustomMoodModal } from "@/components/journal/CustomMoodModal";
 import { useColor } from "react-color-palette";
 
+// Helper func to convert hex to RGB and HSV in order for colour picker to work when editing a mood
+export const hexToColor = (hex) => {
+  // Remove the hash if it exists
+  hex = hex.replace("#", "");
+
+  // Convert hex to rgb
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  // Return the color object
+  return {
+    hex: `#${hex}`,
+    rgb: { r, g, b, a: 1 },
+    hsv: { h: 0, s: 0, v: (Math.max(r, g, b) / 255) * 100, a: 1 },
+  };
+};
+
 const CreateEntryPage = () => {
   const { date } = useParams();
   const [customDate, setCustomDate] = useState(null);
@@ -40,6 +58,7 @@ const CreateEntryPage = () => {
   ];
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [customColour, setCustomColour] = useColor("#FFFFFF");
+  const [moodId, setMoodId] = useState(null);
 
   const { moods, isLoading, isError } = useMoods();
 
@@ -143,24 +162,6 @@ const CreateEntryPage = () => {
     console.log("Emoji clicked: ", emojiObject.emoji);
   };
 
-  // Helper func to convert hex to RGB and HSV in order for colour picker to work when editing a mood
-  const hexToColor = (hex) => {
-    // Remove the hash if it exists
-    hex = hex.replace("#", "");
-
-    // Convert hex to rgb
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-
-    // Return the color object
-    return {
-      hex: `#${hex}`,
-      rgb: { r, g, b, a: 1 },
-      hsv: { h: 0, s: 0, v: (Math.max(r, g, b) / 255) * 100, a: 1 },
-    };
-  };
-
   const moodBlock = (mood) => {
     const isSelected = selectedMoods.includes(mood._id);
     const { userId } = mood;
@@ -177,6 +178,7 @@ const CreateEntryPage = () => {
                 // Convert hex to the expected color object format
                 setCustomColour(hexToColor(mood.colour));
                 setIsDialogOpen(true);
+                setMoodId(mood._id);
               }}
             >
               <PencilIcon />
@@ -246,6 +248,7 @@ const CreateEntryPage = () => {
         customMood={customMood}
         setCustomMood={setCustomMood}
         customEmoji={customEmoji}
+        setCustomEmoji={setCustomEmoji}
         showEmojiPicker={showEmojiPicker}
         setShowEmojiPicker={setShowEmojiPicker}
         onEmojiClick={onEmojiClick}
@@ -254,6 +257,8 @@ const CreateEntryPage = () => {
         setShowColorPicker={setShowColorPicker}
         customColour={customColour}
         setCustomColour={setCustomColour}
+        moodId={moodId}
+        setMoodId={setMoodId}
       />
 
       {/* Journal editor */}

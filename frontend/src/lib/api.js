@@ -239,3 +239,21 @@ export const createMood = async (data) => {
     throw new Error(error.response?.data?.message || "Failed to create mood");
   }
 };
+
+export const updateMood = async ({ moodId, data }) => {
+  try {
+    const response = await axiosInstance.put(`/moods/${moodId}`, data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to update mood");
+  }
+};
+
+export const deleteMood = async (moodId) => {
+  try {
+    const response = await axiosInstance.delete(`/moods/${moodId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to delete mood");
+  }
+};

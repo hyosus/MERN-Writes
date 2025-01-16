@@ -46,3 +46,13 @@ export const updateMood = catchErrors(async (req, res) => {
   await mood.save();
   res.json(mood);
 });
+
+export const deleteMood = catchErrors(async (req, res) => {
+  const result = await Mood.findByIdAndDelete(req.params.id);
+  if (!result) {
+    res.status(404).json({ message: "Mood not found" });
+    throw new Error("Mood not found");
+  }
+
+  res.status(204).end();
+});
