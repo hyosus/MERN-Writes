@@ -230,3 +230,12 @@ export const updateEntry = async ({ entryId, data }) => {
     throw new Error(error.response?.data?.message || "Failed to edit entry");
   }
 };
+
+export const createMood = async (data) => {
+  try {
+    const response = await axiosInstance.post("/moods", data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to create mood");
+  }
+};

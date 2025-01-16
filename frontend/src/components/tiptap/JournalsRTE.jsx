@@ -7,15 +7,12 @@ import { useMutation } from "@tanstack/react-query";
 import { createEntry, updateEntry } from "@/lib/api.js";
 
 const JournalsRTE = ({ date, initialId }) => {
-  console.log("1. ID: ", initialId);
   const [content, setContent] = useState("");
   const [entryId, setEntryId] = useState(initialId); // Track the created entry ID
 
   useEffect(() => {
     setEntryId(initialId);
   }, [initialId]);
-
-  console.log("2. entryId: ", entryId);
 
   const editor = useEditor({
     extensions: [

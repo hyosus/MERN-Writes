@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { format, formatISO, startOfDay } from "date-fns";
+import React, { useEffect, useRef, useState } from "react";
+import { format } from "date-fns";
 import { useParams } from "react-router-dom";
 import {
   Popover,
@@ -7,7 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, CirclePlus } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import useMoods, { MOODS } from "@/hooks/useMoods";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -18,6 +18,8 @@ import { createEntry, updateEntry } from "@/lib/api.js";
 import { useMutation } from "@tanstack/react-query";
 import "./createEntry.css";
 import queryClient from "@/lib/queryClient";
+import { CustomMoodModal } from "@/components/journal/CustomMoodModal";
+import { useColor } from "react-color-palette";
 
 const CreateEntryPage = () => {
   const { date } = useParams();
@@ -25,6 +27,19 @@ const CreateEntryPage = () => {
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [entryId, setEntryId] = useState(null); // Track the created entry ID
   const [title, setTitle] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [customMood, setCustomMood] = useState("Custom");
+  const [customEmoji, setCustomEmoji] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const defaultColours = [
+    "#DF5959",
+    "#F5EA93",
+    "#A8EF81",
+    "#4D7ED9",
+    "#9E83FF",
+  ];
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [customColour, setCustomColour] = useColor("hsl(0 0% 100% / 1.00)");
 
   const { moods, isLoading, isError } = useMoods();
 
@@ -122,6 +137,12 @@ const CreateEntryPage = () => {
     }
   };
 
+  const onEmojiClick = (emojiObject) => {
+    setCustomEmoji(emojiObject.emoji);
+    setShowEmojiPicker(false);
+    console.log("Emoji clicked: ", emojiObject.emoji);
+  };
+
   const moodBlock = (mood) => {
     const isSelected = selectedMoods.includes(mood._id);
     return (
@@ -143,9 +164,9 @@ const CreateEntryPage = () => {
 
   return (
     <>
-      <p>{selectedMoods}</p>
       <div className="flex gap-3 items-center pb-2">
         <h1>{customDate ? format(customDate, "PPP") : format(date, "PPP")}</h1>
+        {/* Datepicker */}
         <Popover>
           <PopoverTrigger asChild>
             <CalendarIcon className="mr-2 h-4 w-4 cursor-pointer" />
@@ -153,7 +174,7 @@ const CreateEntryPage = () => {
           <PopoverContent className="w-auto p-0">
             <Calendar
               mode="single"
-              selected={customDate}
+              selected={customDate ? customDate : new Date(date)}
               onSelect={setCustomDate}
               initialFocus
             />
@@ -164,8 +185,10 @@ const CreateEntryPage = () => {
       <div className="flex flex-col gap-2 pb-2">
         <p>Today I feel...</p>
         <div className="flex gap-3">
-          <Button className="flex flex-col size-20 text-white bg-transparent border-dashed border-2 border-white">
-            {/* <CirclePlus size={0} /> */}
+          <Button
+            onClick={() => setIsDialogOpen(true)}
+            className="flex flex-col size-20 text-white bg-transparent border-dashed border-2 border-white hover:text-black"
+          >
             <h1>➕</h1>
             Custom
           </Button>
@@ -178,6 +201,23 @@ const CreateEntryPage = () => {
         </div>
       </div>
 
+      <CustomMoodModal
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        customMood={customMood}
+        setCustomMood={setCustomMood}
+        customEmoji={customEmoji}
+        showEmojiPicker={showEmojiPicker}
+        setShowEmojiPicker={setShowEmojiPicker}
+        onEmojiClick={onEmojiClick}
+        defaultColours={defaultColours}
+        showColorPicker={showColorPicker}
+        setShowColorPicker={setShowColorPicker}
+        customColour={customColour}
+        setCustomColour={setCustomColour}
+      />
+
+      {/* Journal editor */}
       <div className="pb-5">
         <Label>Title</Label>
         <Input

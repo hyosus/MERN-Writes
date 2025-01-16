@@ -41,6 +41,7 @@
 }
 
 .react-calendar__month-view div:first-child {
+  width: 100%;
   flex-grow: 1;
   align-items: start !important;
 }
@@ -60,6 +61,7 @@
 }
 
 .react-calendar__month-view__days {
+  width: 100%;
   height: 100%;
 }
 .react-calendar__month-view__days > button {
