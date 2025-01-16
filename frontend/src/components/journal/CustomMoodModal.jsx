@@ -65,18 +65,20 @@ export const CustomMoodModal = ({
     const userId = user._id;
     addMood({
       name: customMood,
-      colour: getHslString(customColour.hsv),
+      colour: customColour.hex,
       emoji: customEmoji,
       isCustom: true,
       userId,
     });
   };
 
-  // HSV string formatter
-  const getHslString = (hsv) => {
-    return `hsl(${hsv.h} ${Math.round(hsv.s)}% ${Math.round(
-      hsv.v
-    )}% / ${hsv.a.toFixed(2)})`;
+  const handleColour = (colour) => {
+    // If it's a hex string (from existing mood)
+    if (typeof colour === "string") {
+      return colour; // Just return the hex string for background color
+    }
+    // If it's the color object from ColorPicker
+    return colour.hex;
   };
 
   const { mutate: addMood } = useMutation({
@@ -84,7 +86,18 @@ export const CustomMoodModal = ({
     onSuccess: () => {
       queryClient.invalidateQueries([MOODS]);
     },
+    onError: (error) => {
+      console.error("Error adding mood: ", error);
+    },
   });
+
+  useEffect(() => {
+    console.log("1.customColour: ", customColour);
+  }, [customColour]);
+
+  const testColor = () => {
+    setCustomColour({ hex: "#FF0000" });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -96,11 +109,19 @@ export const CustomMoodModal = ({
           <div
             className="flex flex-col size-36 justify-center items-center gap-4 text-black rounded-lg"
             style={{
-              backgroundColor: getHslString(customColour.hsv),
+              backgroundColor: handleColour(customColour),
             }}
           >
             {customEmoji ? (
-              <h1 className="text-4xl">{customEmoji}</h1>
+              <h1
+                className="text-4xl cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowEmojiPicker(!showEmojiPicker);
+                }}
+              >
+                {customEmoji}
+              </h1>
             ) : (
               <CirclePlus
                 size={40}
@@ -131,7 +152,7 @@ export const CustomMoodModal = ({
             {showColorPicker && (
               <div ref={colorPickerRef}>
                 <ColorPicker
-                  hideInput={["rgb", "hex"]}
+                  hideInput={["hsv", "hex"]}
                   color={customColour}
                   onChange={setCustomColour}
                   height={100}
@@ -150,6 +171,7 @@ export const CustomMoodModal = ({
           <Button className="w-20" onClick={() => onSubmit()}>
             Save
           </Button>
+          <Button onClick={() => testColor(customColour)}>Test</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

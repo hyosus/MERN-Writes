@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import { useParams } from "react-router-dom";
 import {
   Popover,
@@ -7,7 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, CirclePlus } from "lucide-react";
+import { CalendarIcon, CirclePlus, PencilIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import useMoods, { MOODS } from "@/hooks/useMoods";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -39,7 +39,7 @@ const CreateEntryPage = () => {
     "#9E83FF",
   ];
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [customColour, setCustomColour] = useColor("hsl(0 0% 100% / 1.00)");
+  const [customColour, setCustomColour] = useColor("#FFFFFF");
 
   const { moods, isLoading, isError } = useMoods();
 
@@ -143,22 +143,61 @@ const CreateEntryPage = () => {
     console.log("Emoji clicked: ", emojiObject.emoji);
   };
 
+  // Helper func to convert hex to RGB and HSV in order for colour picker to work when editing a mood
+  const hexToColor = (hex) => {
+    // Remove the hash if it exists
+    hex = hex.replace("#", "");
+
+    // Convert hex to rgb
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Return the color object
+    return {
+      hex: `#${hex}`,
+      rgb: { r, g, b, a: 1 },
+      hsv: { h: 0, s: 0, v: (Math.max(r, g, b) / 255) * 100, a: 1 },
+    };
+  };
+
   const moodBlock = (mood) => {
     const isSelected = selectedMoods.includes(mood._id);
+    const { userId } = mood;
     return (
-      <Button
-        key={mood._id}
-        id="mood-btn"
-        className="flex flex-col size-20"
-        style={{
-          backgroundColor: mood.colour,
-          opacity: isSelected && "60%",
-        }}
-        onClick={() => handleMoodSelected(mood._id)}
-      >
-        <h1>{mood.emoji}</h1>
-        {mood.name}
-      </Button>
+      <div className="relative h-full pt-4">
+        {userId && (
+          <div className="absolute top-0 right-0 transform  translate-x-[20%]">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => {
+                setCustomMood(mood.name);
+                setCustomEmoji(mood.emoji);
+                // Convert hex to the expected color object format
+                setCustomColour(hexToColor(mood.colour));
+                setIsDialogOpen(true);
+              }}
+            >
+              <PencilIcon />
+            </Button>
+          </div>
+        )}
+
+        <Button
+          key={mood._id}
+          id="mood-btn"
+          className="flex flex-col size-20"
+          style={{
+            backgroundColor: mood.colour,
+            opacity: isSelected && "60%",
+          }}
+          onClick={() => handleMoodSelected(mood._id)}
+        >
+          <h1>{mood.emoji}</h1>
+          {mood.name}
+        </Button>
+      </div>
     );
   };
 
@@ -184,7 +223,7 @@ const CreateEntryPage = () => {
 
       <div className="flex flex-col gap-2 pb-2">
         <p>Today I feel...</p>
-        <div className="flex gap-3">
+        <div className="flex items-end gap-3 pb-2 translate-y-[-10%]">
           <Button
             onClick={() => setIsDialogOpen(true)}
             className="flex flex-col size-20 text-white bg-transparent border-dashed border-2 border-white hover:text-black"
@@ -192,7 +231,7 @@ const CreateEntryPage = () => {
             <h1>➕</h1>
             Custom
           </Button>
-          <ScrollArea className="w-full pb-3">
+          <ScrollArea className="flex flex-col overflow-auto ">
             <div className="flex gap-3">
               {moods && moods.map((mood) => moodBlock(mood))}
             </div>
