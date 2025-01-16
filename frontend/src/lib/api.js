@@ -231,6 +231,24 @@ export const updateEntry = async ({ entryId, data }) => {
   }
 };
 
+export const getAllEntries = async () => {
+  try {
+    const response = await axiosInstance.get("/journals");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get entries");
+  }
+};
+
+export const getEntriesByDate = async (date) => {
+  try {
+    const response = await axiosInstance.get(`/journals/date/${date}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get entries");
+  }
+};
+
 export const createMood = async (data) => {
   try {
     const response = await axiosInstance.post("/moods", data);

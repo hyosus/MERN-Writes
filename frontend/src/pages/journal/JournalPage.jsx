@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./customCalendar.css";
@@ -13,12 +13,19 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import useJournals from "@/hooks/useJournal";
+import JournalEntryBlock from "@/components/journal/JournalEntryBlock";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const { journalMoods, isLoading, isError } = useJournalMoods();
+  const { journals, isLoading: isJournalLoading } = useJournals();
+
+  if (journals) {
+    console.log(journals);
+  }
 
   const tileContent = ({ date, view }) => {
     if (view === "month" && journalMoods) {
@@ -49,6 +56,14 @@ const JournalPage = () => {
     setIsDialogOpen(true);
   };
 
+  const filteredJournals = journals?.filter((journal) =>
+    isSameDay(new Date(journal.date), selectedDate)
+  );
+
+  const filteredMoods = journalMoods.filter((entry) =>
+    isSameDay(new Date(entry.date), selectedDate)
+  );
+
   return (
     <>
       <div className="flex flex-col h-full">
@@ -67,7 +82,25 @@ const JournalPage = () => {
               {selectedDate && format(selectedDate, "PPP")}
             </DialogTitle>
           </DialogHeader>
-          <div>{selectedDate && <div></div>}</div>
+          <div>
+            {isJournalLoading ? (
+              <p>Loading journals...</p>
+            ) : filteredJournals && filteredJournals.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                {filteredJournals.map((journal) => (
+                  <Link to={`/journal/${journal._id}`} key={journal._id}>
+                    <JournalEntryBlock
+                      key={journal._id}
+                      journal={journal}
+                      filteredMoods={filteredMoods}
+                    />
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p>No entries for this date</p>
+            )}
+          </div>
           <Link to={`/create-entry/${selectedDate}`} className="w-full">
             <Button className="w-full">Add Entry</Button>
           </Link>

@@ -74,6 +74,13 @@ export const getJournalByDate = catchErrors(async (req, res) => {
     res.status(400).json({ message: error.details[0].message });
     throw new Error("Error in getting journal");
   }
+
+  const journals = await Journal.find({ date: value, userId: req.userId });
+  if (!journals) {
+    res.status(404).json({ message: "Journal not found" });
+    throw new Error("Journal not found");
+  }
+  res.status(200).json(journals);
 });
 
 export const getJournalMood = catchErrors(async (req, res) => {
