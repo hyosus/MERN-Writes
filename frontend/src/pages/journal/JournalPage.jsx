@@ -25,20 +25,12 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+
 import { useMutation } from "@tanstack/react-query";
 import { deleteEntry } from "@/lib/api.js";
 import queryClient from "@/lib/queryClient";
+import DeleteEntryModal from "@/components/journal/DeleteEntryModal";
+import useDeleteEntry from "@/hooks/useDeleteEntry";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
@@ -53,14 +45,7 @@ const JournalPage = () => {
   const [sortDirection, setSortDirection] = useState("desc");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState(null);
-
-  const { mutate: removeEntry } = useMutation({
-    mutationFn: deleteEntry,
-    onSuccess: () => {
-      queryClient.invalidateQueries([JOURNALS]);
-    },
-  });
-
+  const { deleteEntry } = useDeleteEntry();
   // Update localStorage when view changes
   useEffect(() => {
     localStorage.setItem("journalView", view);
@@ -153,6 +138,13 @@ const JournalPage = () => {
     return sortedGroupedEntries;
   };
 
+  const handleDelete = () => {
+    if (selectedEntryId) {
+      deleteEntry(selectedEntryId);
+      setIsDeleteModalOpen(false);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col h-full w-full gap-4">
@@ -210,13 +202,16 @@ const JournalPage = () => {
             {isJournalLoading ? (
               <div>Loading journals...</div>
             ) : journals ? (
-              <GridEntryBlock
-                groupedEntries={groupEntriesByDate(journals)}
-                isDeleteModalOpen={isDeleteModalOpen}
-                setIsDeleteModalOpen={setIsDeleteModalOpen}
-                selectedEntryId={selectedEntryId}
-                setSelectedEntryId={setSelectedEntryId}
-              />
+              (console.log("2. Entry id: ", selectedEntryId),
+              (
+                <GridEntryBlock
+                  groupedEntries={groupEntriesByDate(journals)}
+                  isDeleteModalOpen={isDeleteModalOpen}
+                  setIsDeleteModalOpen={setIsDeleteModalOpen}
+                  selectedEntryId={selectedEntryId}
+                  setSelectedEntryId={setSelectedEntryId}
+                />
+              ))
             ) : (
               <div>No entries found</div>
             )}
@@ -257,27 +252,12 @@ const JournalPage = () => {
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete your journal entry.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-white hover:bg-destructive/60"
-              onClick={() => {
-                if (selectedEntryId) removeEntry(selectedEntryId);
-              }}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteEntryModal
+        isDeleteModalOpen={isDeleteModalOpen}
+        setIsDeleteModalOpen={setIsDeleteModalOpen}
+        selectedEntryId={selectedEntryId}
+        handleDelete={handleDelete}
+      />
     </>
   );
 };

@@ -14,7 +14,7 @@ import useMoods, { MOODS } from "@/hooks/useMoods";
 import { getEntry, updateEntry } from "@/lib/api.js";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarIcon, PencilIcon } from "lucide-react";
+import { CalendarIcon, Ellipsis, PencilIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./createEntry.css";
@@ -22,6 +22,8 @@ import queryClient from "@/lib/queryClient";
 import { CustomMoodModal } from "@/components/journal/CustomMoodModal";
 import { useColor } from "react-color-palette";
 import { hexToColor } from "./CreateEntryPage";
+import DeleteEntryModal from "@/components/journal/DeleteEntryModal";
+import useDeleteEntry from "@/hooks/useDeleteEntry";
 
 const EditEntryPage = () => {
   const { entryId } = useParams();
@@ -44,6 +46,8 @@ const EditEntryPage = () => {
   ];
   const [customColour, setCustomColour] = useColor("#FFFFFF");
   const [moodId, setMoodId] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { deleteEntry } = useDeleteEntry();
 
   const {
     data: journal,
@@ -189,6 +193,12 @@ const EditEntryPage = () => {
     setDate(newDate);
   };
 
+  const handleDelete = () => {
+    if (entryId) {
+      deleteEntry(entryId);
+    }
+  };
+
   return (
     <>
       <CustomMoodModal
@@ -210,22 +220,40 @@ const EditEntryPage = () => {
         setMoodId={setMoodId}
       />
 
-      <div className="flex gap-3 items-center pb-2">
-        <h1>{date && format(date, "PPP")}</h1>
-        {/* Datepicker */}
+      <div className="flex justify-between items-center pb-3">
+        <div className="flex gap-3 items-center">
+          <h1>{date && format(date, "PPP")}</h1>
+          {/* Datepicker */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <CalendarIcon className="mr-2 h-4 w-4 cursor-pointer" />
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={new Date(date)}
+                onSelect={(newDate) => {
+                  handleDateChange(newDate);
+                }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
         <Popover>
           <PopoverTrigger asChild>
-            <CalendarIcon className="mr-2 h-4 w-4 cursor-pointer" />
+            <Button variant="icon">
+              <Ellipsis />
+            </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={new Date(date)}
-              onSelect={(newDate) => {
-                handleDateChange(newDate);
-              }}
-              initialFocus
-            />
+          <PopoverContent className="w-fit">
+            <Button
+              variant="destructive"
+              onClick={() => setIsDeleteModalOpen(true)}
+            >
+              Delete
+            </Button>
           </PopoverContent>
         </Popover>
       </div>
@@ -263,6 +291,13 @@ const EditEntryPage = () => {
         entryId={entryId}
         setEntryId={() => {}} // Not needed for edit mode
         initialContent={content}
+      />
+
+      <DeleteEntryModal
+        isDeleteModalOpen={isDeleteModalOpen}
+        setIsDeleteModalOpen={setIsDeleteModalOpen}
+        selectedEntryId={entryId}
+        handleDelete={handleDelete}
       />
     </>
   );

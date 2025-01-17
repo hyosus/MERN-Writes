@@ -9,13 +9,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 const GridEntryBlock = ({
   groupedEntries,
   setIsDeleteModalOpen,
-  selectedEntryId,
   setSelectedEntryId,
 }) => {
   const handleEllipsisClick = useCallback(
     (entryId) => {
       setSelectedEntryId(entryId);
-      setIsDeleteModalOpen(true);
+      console.log("entryId", entryId);
     },
     [setSelectedEntryId, setIsDeleteModalOpen]
   );
@@ -33,16 +32,15 @@ const GridEntryBlock = ({
                   {entries.map((entry) => (
                     <div
                       key={entry._id}
-                      className="flex cursor-pointer hover:bg-white/5 rounded-lg"
+                      className="flex cursor-pointer hover:bg-white/5 rounded-lg translate-x-[-1rem]"
                     >
-                      <Link to={`/journal/${entry._id}`} className="flex-1">
+                      <Link to={`/journal/${entry._id}`} className="flex-1 p-4">
                         <div className="flex gap-4 ">
                           <div className="flex border border-white rounded min-h-[80px] px-4 items-center">
                             <h1>{format(new Date(entry.date), "dd")}</h1>
                           </div>
                           <div className="flex flex-col gap-2 text-ellipsis line-clamp-1">
                             <h2 className="truncate">
-                              <p>{entry._id}</p>
                               {entry.title
                                 ? entry.title
                                 : formatContent(entry.content)}
@@ -54,13 +52,11 @@ const GridEntryBlock = ({
                         </div>
                       </Link>
 
-                      <div
-                        className="w-9 z-10"
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                      <div className="" onClick={(e) => e.stopPropagation()}>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
+                              variant="icon"
                               onClick={() => {
                                 handleEllipsisClick(entry._id);
                               }}
