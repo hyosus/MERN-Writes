@@ -249,6 +249,15 @@ export const getEntry = async (entryId) => {
   }
 };
 
+export const deleteEntry = async (entryId) => {
+  try {
+    const response = await axiosInstance.delete(`/journals/${entryId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to delete entry");
+  }
+};
+
 export const createMood = async (data) => {
   try {
     const response = await axiosInstance.post("/moods", data);

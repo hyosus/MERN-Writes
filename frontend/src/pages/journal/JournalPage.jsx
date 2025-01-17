@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import useJournals from "@/hooks/useJournal";
+import useJournals, { JOURNALS } from "@/hooks/useJournal";
 import JournalEntryBlock from "@/components/journal/JournalEntryBlock";
 import { ArrowUpDown, CalendarIcon, Heart, LayoutGrid } from "lucide-react";
 import GridEntryBlock from "@/components/journal/GridEntryBlock";
@@ -25,6 +25,20 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useMutation } from "@tanstack/react-query";
+import { deleteEntry } from "@/lib/api.js";
+import queryClient from "@/lib/queryClient";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
@@ -37,6 +51,16 @@ const JournalPage = () => {
   const { journalMoods, isLoading, isError } = useJournalMoods();
   const { journals, isLoading: isJournalLoading } = useJournals();
   const [sortDirection, setSortDirection] = useState("desc");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedEntryId, setSelectedEntryId] = useState(null);
+
+  const { mutate: removeEntry } = useMutation({
+    mutationFn: deleteEntry,
+    onSuccess: () => {
+      queryClient.invalidateQueries([JOURNALS]);
+    },
+  });
+
   // Update localStorage when view changes
   useEffect(() => {
     localStorage.setItem("journalView", view);
@@ -186,7 +210,13 @@ const JournalPage = () => {
             {isJournalLoading ? (
               <div>Loading journals...</div>
             ) : journals ? (
-              <GridEntryBlock groupedEntries={groupEntriesByDate(journals)} />
+              <GridEntryBlock
+                groupedEntries={groupEntriesByDate(journals)}
+                isDeleteModalOpen={isDeleteModalOpen}
+                setIsDeleteModalOpen={setIsDeleteModalOpen}
+                selectedEntryId={selectedEntryId}
+                setSelectedEntryId={setSelectedEntryId}
+              />
             ) : (
               <div>No entries found</div>
             )}
@@ -226,6 +256,28 @@ const JournalPage = () => {
           </Link>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete your journal entry.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-white hover:bg-destructive/60"
+              onClick={() => {
+                if (selectedEntryId) removeEntry(selectedEntryId);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
