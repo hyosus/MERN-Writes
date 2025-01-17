@@ -59,6 +59,7 @@ const CreateEntryPage = () => {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [customColour, setCustomColour] = useColor("#FFFFFF");
   const [moodId, setMoodId] = useState(null);
+  const [content, setContent] = useState("");
 
   const { moods, isLoading, isError } = useMoods();
 
@@ -273,7 +274,10 @@ const CreateEntryPage = () => {
       </div>
       <JournalsRTE
         date={customDate ? formatDate(customDate) : formatDate(new Date(date))}
-        initialId={entryId}
+        entryId={entryId}
+        setEntryId={setEntryId}
+        content={content}
+        setContent={setContent}
       />
     </>
   );

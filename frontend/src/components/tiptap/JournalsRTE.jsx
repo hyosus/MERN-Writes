@@ -8,32 +8,7 @@ import { createEntry, updateEntry } from "@/lib/api.js";
 import queryClient from "@/lib/queryClient";
 import { JOURNALS } from "@/hooks/useJournal";
 
-const JournalsRTE = ({ date, initialId, initialContent }) => {
-  const [content, setContent] = useState(initialContent || "");
-  const [entryId, setEntryId] = useState(initialId); // Track the created entry ID
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: "Write something …",
-      }),
-    ],
-    content: initialContent || "",
-    onUpdate({ editor }) {
-      const updatedContent = editor.getHTML(); // get editor's content
-      setContent(updatedContent);
-
-      if (entryId) {
-        // edit
-        editEntry({ entryId, data: { content: updatedContent, date: date } });
-      } else {
-        // create
-        addEntry({ content: updatedContent, date: date });
-      }
-    },
-  });
-
+const JournalsRTE = ({ date, entryId, setEntryId, content, setContent }) => {
   const { mutate: addEntry } = useMutation({
     mutationFn: createEntry,
     onSuccess: (data) => {
@@ -54,10 +29,39 @@ const JournalsRTE = ({ date, initialId, initialContent }) => {
   });
 
   useEffect(() => {
-    if (editor && initialContent) {
-      editor.commands.setContent(initialContent);
+    if (entryId) {
+      setEntryId(entryId);
     }
-  }, [editor, initialContent]);
+
+    if (content) {
+      setContent(content);
+      if (editor) {
+        editor.commands.setContent(content);
+      }
+    }
+  }, [entryId, content]);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Placeholder.configure({
+        placeholder: "Write something …",
+      }),
+    ],
+    content: content,
+    onUpdate({ editor }) {
+      const updatedContent = editor.getHTML(); // get editor's content
+      setContent(updatedContent);
+
+      if (entryId) {
+        // edit
+        editEntry({ entryId, data: { content: updatedContent, date: date } });
+      } else {
+        // create
+        addEntry({ content: updatedContent, date: date });
+      }
+    },
+  });
 
   return (
     <div className="CONTAINER flex flex-col h-full flex-grow-1">

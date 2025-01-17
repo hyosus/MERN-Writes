@@ -91,7 +91,7 @@ const JournalPage = () => {
   };
 
   const groupedEntries = groupEntriesByDate(journals);
-  console.log(groupedEntries);
+  console.log();
 
   return (
     <>
