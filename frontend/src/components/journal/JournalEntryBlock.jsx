@@ -18,7 +18,7 @@ const JournalEntryBlock = ({ journal, filteredMoods }) => {
   return (
     <>
       <div key={journal._id} className="flex gap-4 p-2 border rounded">
-        <div className="flex flex-wrap w-14 gap-1">
+        <div className="flex flex-wrap w-14 gap-1 pt-2">
           {journal.mood.map((mood) => getColour(mood))}
         </div>
         <div>

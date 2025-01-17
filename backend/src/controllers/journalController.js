@@ -5,6 +5,8 @@ import {
   journalSchema,
 } from "./journalSchema.js";
 import { Journal } from "../models/journalModel.js";
+import Joi from "joi";
+import { Types } from "mongoose";
 
 export const createJournal = catchErrors(async (req, res) => {
   console.log("1. Received date in backend:", req.body.date);
@@ -48,7 +50,35 @@ export const createJournal = catchErrors(async (req, res) => {
 });
 
 export const getAllJournals = catchErrors(async (req, res) => {
-  const journals = await Journal.find({ userId: req.userId });
+  const user = req.userId;
+  const { error, value } = Joi.string().length(24).validate(user);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in getting all journals");
+  }
+  const journals = await Journal.aggregate([
+    // Match user's journals
+    { $match: { userId: new Types.ObjectId(value) } },
+
+    // Add fields for sorting
+    {
+      $addFields: {
+        year: { $year: "$date" },
+        month: { $month: "$date" },
+        day: { $dayOfMonth: "$date" },
+      },
+    },
+
+    // Sort by year descending, then month and day ascending
+    {
+      $sort: {
+        year: -1,
+        month: 1,
+        day: 1,
+      },
+    },
+  ]);
+
   res.status(200).json(journals);
 });
 
