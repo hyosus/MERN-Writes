@@ -176,6 +176,19 @@ const EditEntryPage = () => {
     });
   };
 
+  const handleDateChange = (newDate) => {
+    if (!newDate) return;
+
+    const formattedDate = formatDate(newDate);
+
+    editEntry({
+      entryId,
+      data: { date: formattedDate },
+    });
+
+    setDate(newDate);
+  };
+
   return (
     <>
       <CustomMoodModal
@@ -208,7 +221,9 @@ const EditEntryPage = () => {
             <Calendar
               mode="single"
               selected={new Date(date)}
-              onSelect={setDate}
+              onSelect={(newDate) => {
+                handleDateChange(newDate);
+              }}
               initialFocus
             />
           </PopoverContent>
@@ -245,7 +260,8 @@ const EditEntryPage = () => {
       </div>
       <JournalsRTE
         date={formatDate(new Date(date))}
-        initialId={entryId}
+        entryId={entryId}
+        setEntryId={() => {}} // Not needed for edit mode
         initialContent={content}
       />
     </>

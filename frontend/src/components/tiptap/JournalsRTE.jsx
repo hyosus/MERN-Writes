@@ -8,7 +8,34 @@ import { createEntry, updateEntry } from "@/lib/api.js";
 import queryClient from "@/lib/queryClient";
 import { JOURNALS } from "@/hooks/useJournal";
 
-const JournalsRTE = ({ date, entryId, setEntryId, content, setContent }) => {
+const JournalsRTE = ({ date, entryId, setEntryId, initialContent }) => {
+  const [content, setContent] = useState(initialContent || "");
+
+  const editor = useEditor(
+    {
+      extensions: [
+        StarterKit,
+        Placeholder.configure({
+          placeholder: "Write something …",
+        }),
+      ],
+      content: content,
+      onUpdate({ editor }) {
+        const updatedContent = editor.getHTML(); // get editor's content
+        setContent(updatedContent);
+
+        if (entryId) {
+          // edit
+          editEntry({ entryId, data: { content: updatedContent, date: date } });
+        } else {
+          // create
+          addEntry({ content: updatedContent, date: date });
+        }
+      },
+    },
+    [entryId]
+  );
+
   const { mutate: addEntry } = useMutation({
     mutationFn: createEntry,
     onSuccess: (data) => {
@@ -32,36 +59,10 @@ const JournalsRTE = ({ date, entryId, setEntryId, content, setContent }) => {
     if (entryId) {
       setEntryId(entryId);
     }
-
-    if (content) {
-      setContent(content);
-      if (editor) {
-        editor.commands.setContent(content);
-      }
+    if (editor && initialContent) {
+      editor.commands.setContent(initialContent);
     }
-  }, [entryId, content]);
-
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Placeholder.configure({
-        placeholder: "Write something …",
-      }),
-    ],
-    content: content,
-    onUpdate({ editor }) {
-      const updatedContent = editor.getHTML(); // get editor's content
-      setContent(updatedContent);
-
-      if (entryId) {
-        // edit
-        editEntry({ entryId, data: { content: updatedContent, date: date } });
-      } else {
-        // create
-        addEntry({ content: updatedContent, date: date });
-      }
-    },
-  });
+  }, [editor, entryId, initialContent]);
 
   return (
     <div className="CONTAINER flex flex-col h-full flex-grow-1">

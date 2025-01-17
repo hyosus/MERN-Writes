@@ -1,5 +1,6 @@
 import { Heart } from "lucide-react";
 import React from "react";
+import { formatContent } from "../FormatContent.jsx";
 
 const JournalEntryBlock = ({ journal, filteredMoods }) => {
   const getColour = (jmood) => {
@@ -12,8 +13,7 @@ const JournalEntryBlock = ({ journal, filteredMoods }) => {
     return null;
   };
 
-  const formattedContent =
-    journal.content && journal.content.replace(/<[^>]*>?/gm, "");
+  const formattedContent = journal.content && formatContent(journal.content);
 
   return (
     <>

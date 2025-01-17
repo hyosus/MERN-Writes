@@ -15,7 +15,16 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import useJournals from "@/hooks/useJournal";
 import JournalEntryBlock from "@/components/journal/JournalEntryBlock";
-import { CalendarIcon, LayoutGrid } from "lucide-react";
+import { ArrowUpDown, CalendarIcon, LayoutGrid } from "lucide-react";
+import GridEntryBlock from "@/components/journal/GridEntryBlock";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
@@ -27,7 +36,7 @@ const JournalPage = () => {
   });
   const { journalMoods, isLoading, isError } = useJournalMoods();
   const { journals, isLoading: isJournalLoading } = useJournals();
-
+  const [sortDirection, setSortDirection] = useState("desc");
   // Update localStorage when view changes
   useEffect(() => {
     localStorage.setItem("journalView", view);
@@ -74,24 +83,39 @@ const JournalPage = () => {
 
   // Creates structure: { year: { month: [entries] } }
   const groupEntriesByDate = (entries) => {
-    return entries?.reduce((acc, entry) => {
+    if (!entries) return {};
+
+    const grouped = entries.reduce((acc, entry) => {
       const date = new Date(entry.date);
       const year = date.getFullYear();
       const month = date.toLocaleString("default", { month: "long" });
 
-      if (!acc[year]) {
-        acc[year] = {};
-      }
-      if (!acc[year][month]) {
-        acc[year][month] = [];
-      }
+      if (!acc[year]) acc[year] = {};
+      if (!acc[year][month]) acc[year][month] = [];
       acc[year][month].push(entry);
       return acc;
     }, {});
-  };
 
-  const groupedEntries = groupEntriesByDate(journals);
-  console.log();
+    // Sort by year
+    const sortedYears = Object.keys(grouped).sort((a, b) => {
+      if (sortDirection === "desc") {
+        return parseInt(b) - parseInt(a);
+      } else {
+        return parseInt(a) - parseInt(b);
+      }
+    });
+
+    // Create a new array with sorted entries
+    const sortedGroupedEntries = sortedYears.map((year) => ({
+      year,
+      months: Object.entries(grouped[year]).map(([month, entries]) => ({
+        month,
+        entries,
+      })),
+    }));
+
+    return sortedGroupedEntries;
+  };
 
   return (
     <>
@@ -113,7 +137,31 @@ const JournalPage = () => {
           >
             <LayoutGrid />
           </Button>
+          {view === "Grid" && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <ArrowUpDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Sort by year</DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                  value={sortDirection}
+                  onValueChange={setSortDirection}
+                >
+                  <DropdownMenuRadioItem value="desc">
+                    Descending
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="asc">
+                    Ascending
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
+
         {view === "Calendar" ? (
           <Calendar
             onChange={onChange}
@@ -123,36 +171,13 @@ const JournalPage = () => {
           />
         ) : (
           <>
-            <div className="flex flex-col gap-4">
-              {Object.entries(groupedEntries || {}).map(([year, months]) => (
-                <div key={year}>
-                  <h1 className="text-4xl font-bold">{year}</h1>
-                  {Object.entries(months).map(([month, entries]) => (
-                    <>
-                      <h3 className="text-xl">{month}</h3>
-                      <div key={month} className="grid grid-cols-2 gap-4 py-4">
-                        {entries.map((entry) => (
-                          <Link to={`/journal/${entry._id}`} key={entry._id}>
-                            <div className="flex gap-4 cursor-pointer hover:bg-white/5 rounded-lg">
-                              <div className="flex border border-white rounded min-h-[80px] px-4 items-center">
-                                <h1>{format(new Date(entry.date), "dd")}</h1>
-                              </div>
-                              <div className="flex flex-col gap-2">
-                                <h2>{entry.title}</h2>
-                                <p>
-                                  {entry.content &&
-                                    entry.content.replace(/<[^>]*>?/gm, "")}
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </>
-                  ))}
-                </div>
-              ))}
-            </div>
+            {isJournalLoading ? (
+              <div>Loading journals...</div>
+            ) : journals ? (
+              <GridEntryBlock groupedEntries={groupEntriesByDate(journals)} />
+            ) : (
+              <div>No entries found</div>
+            )}
           </>
         )}
       </div>
