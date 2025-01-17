@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import useJournals from "@/hooks/useJournal";
 import JournalEntryBlock from "@/components/journal/JournalEntryBlock";
-import { ArrowUpDown, CalendarIcon, LayoutGrid } from "lucide-react";
+import { ArrowUpDown, CalendarIcon, Heart, LayoutGrid } from "lucide-react";
 import GridEntryBlock from "@/components/journal/GridEntryBlock";
 import {
   DropdownMenu,
@@ -43,13 +43,19 @@ const JournalPage = () => {
   }, [view]);
 
   const tileContent = ({ date, view }) => {
-    if (view === "month" && journalMoods) {
-      const journalEntries = journalMoods.filter((entry) =>
+    if (view === "month") {
+      // Check for journal entries on this date
+      const hasEntries = journals?.some((entry) =>
         isSameDay(new Date(entry.date), date)
       );
-      const allMoods = journalEntries.flatMap((entry) => entry.mood);
 
-      if (allMoods.length > 0) {
+      // Check for mood entries
+      const journalEntries = journalMoods?.filter((entry) =>
+        isSameDay(new Date(entry.date), date)
+      );
+      const allMoods = journalEntries?.flatMap((entry) => entry.mood);
+
+      if (allMoods?.length > 0) {
         return (
           <div className="absolute top-0 left-0 flex items-end justify-center w-full h-full gap-1 p-3">
             {allMoods.map((moodItem, index) => (
@@ -59,6 +65,12 @@ const JournalPage = () => {
                 style={{ color: moodItem.colour }}
               />
             ))}
+          </div>
+        );
+      } else if (hasEntries) {
+        return (
+          <div className="absolute top-0 left-0 flex items-end justify-center w-full h-full p-3">
+            <Heart size={"20%"} />
           </div>
         );
       }

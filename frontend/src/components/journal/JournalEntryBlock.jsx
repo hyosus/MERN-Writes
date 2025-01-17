@@ -1,6 +1,7 @@
-import { Heart } from "lucide-react";
 import React from "react";
 import { formatContent } from "../FormatContent.jsx";
+import { FaHeart } from "react-icons/fa6";
+import { Heart } from "lucide-react";
 
 const JournalEntryBlock = ({ journal, filteredMoods }) => {
   const getColour = (jmood) => {
@@ -19,7 +20,11 @@ const JournalEntryBlock = ({ journal, filteredMoods }) => {
     <>
       <div key={journal._id} className="flex gap-4 p-2 border rounded">
         <div className="flex flex-wrap w-14 gap-1 pt-2">
-          {journal.mood.map((mood) => getColour(mood))}
+          {journal.mood.length > 0 ? (
+            journal.mood.map((mood) => getColour(mood))
+          ) : (
+            <FaHeart />
+          )}
         </div>
         <div>
           <h1>{journal.title}</h1>
