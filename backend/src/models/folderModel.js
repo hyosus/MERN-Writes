@@ -15,6 +15,11 @@ const folderSchema = new mongoose.Schema(
       required: true,
       enum: ["Note", "Journal"], // Only allow "Note" or "Journal"
     },
+    colour: {
+      type: String,
+      required: false,
+      default: "#FFFFFF",
+    },
     notes: [
       {
         type: mongoose.Schema.Types.ObjectId,

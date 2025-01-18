@@ -7,15 +7,25 @@ import { FaHeart } from "react-icons/fa6";
 import { format, isSameDay } from "date-fns";
 import {
   Dialog,
-  DialogContent,
+  DialogClose,
+  DialogFooter,
   DialogHeader,
+  DialogContent,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import useJournals, { JOURNALS } from "@/hooks/useJournal";
 import JournalEntryBlock from "@/components/journal/JournalEntryBlock";
-import { ArrowUpDown, CalendarIcon, Heart, LayoutGrid } from "lucide-react";
+import {
+  ArrowUpDown,
+  CalendarIcon,
+  Folder,
+  Heart,
+  LayoutGrid,
+  Plus,
+} from "lucide-react";
 import GridEntryBlock from "@/components/journal/GridEntryBlock";
 import {
   DropdownMenu,
@@ -24,17 +34,17 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
+  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-
-import { useMutation } from "@tanstack/react-query";
-import { deleteEntry } from "@/lib/api.js";
-import queryClient from "@/lib/queryClient";
 import DeleteEntryModal from "@/components/journal/DeleteEntryModal";
 import useDeleteEntry from "@/hooks/useDeleteEntry";
+import FAB from "@/components/FAB";
+import useAddFolder from "@/hooks/useAddFolder";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFABDialogOpen, setIsFABDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [view, setView] = useState(() => {
     // get from local storage or default to Calendar
@@ -46,6 +56,9 @@ const JournalPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState(null);
   const { deleteEntry } = useDeleteEntry();
+  const { addFolder } = useAddFolder();
+  const [folderName, setFolderName] = useState("");
+
   // Update localStorage when view changes
   useEffect(() => {
     localStorage.setItem("journalView", view);
@@ -257,6 +270,16 @@ const JournalPage = () => {
         setIsDeleteModalOpen={setIsDeleteModalOpen}
         selectedEntryId={selectedEntryId}
         handleDelete={handleDelete}
+      />
+
+      <FAB
+        isDialogOpen={isFABDialogOpen}
+        setIsDialogOpen={setIsFABDialogOpen}
+        date={new Date()}
+        addFolder={addFolder}
+        folderType="Journal"
+        folderName={folderName}
+        setFolderName={setFolderName}
       />
     </>
   );

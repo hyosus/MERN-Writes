@@ -202,6 +202,15 @@ export const getJournalMood = async () => {
   }
 };
 
+export const getJournalFolder = async () => {
+  try {
+    const response = await axiosInstance.get("/folders/journal");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get folders");
+  }
+};
+
 export const getAllMoods = async () => {
   try {
     const response = await axiosInstance.get("/moods");
@@ -282,5 +291,14 @@ export const deleteMood = async (moodId) => {
     return response;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to delete mood");
+  }
+};
+
+export const createFolder = async (data) => {
+  try {
+    const response = await axiosInstance.post("/folders", data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to create folder");
   }
 };

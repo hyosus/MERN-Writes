@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
-import { formatContent } from "../FormatContent";
+import { formatContent } from "../../lib/FormatContent.js";
 import { Button } from "../ui/button";
 import { Ellipsis } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";

@@ -17,7 +17,7 @@ export const createFolder = catchErrors(async (req, res) => {
     throw new Error("Unauthorised");
   }
 
-  const { name, type, note, journal } = value;
+  const { name, type, colour, note, journal } = value;
   if (!name || !type) {
     res.status(400).json({ message: "Name and type are required" });
     throw new Error("Error in creating folder");
@@ -27,6 +27,7 @@ export const createFolder = catchErrors(async (req, res) => {
     userId: user,
     name: name,
     type: type,
+    colour: colour || "#FFFFFF",
     note: note || null,
     journal: journal || null,
   });
@@ -95,6 +96,35 @@ export const addNoteToFolder = catchErrors(async (req, res) => {
     folder.notes.push(note);
   }
   // folder.notes = [...folder.notes, ...note];
+  await folder.save();
+
+  res.status(200).json(folder);
+});
+
+export const addJournalToFolder = catchErrors(async (req, res) => {
+  const { error, value } = folderSchema.validate(req.body);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in updating folder");
+  }
+
+  const folder = await Folder.findById(req.params.id);
+  if (!folder) {
+    res.status(404).json({ message: "Folder not found" });
+    throw new Error("Folder not found");
+  }
+
+  const { journal, name, type } = value;
+  if (name) folder.name = name;
+  if (type) folder.type = type;
+
+  // Add notes to the folder
+  if (Array.isArray(journal)) {
+    folder.journals = [...folder.journals, ...journal];
+  } else if (journal) {
+    folder.journals.push(journal);
+  }
+  // folder.journals = [...folder.journals, ...journal];
   await folder.save();
 
   res.status(200).json(folder);

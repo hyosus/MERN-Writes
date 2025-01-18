@@ -1,13 +1,19 @@
 import { BookOpen, ChevronLeft, File, Flame } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import JournalSideBar from "./JournalSideBar";
 
 function LeftSidebar() {
-  const [selection, setSelection] = useState("");
+  // Initialize state from localStorage
+  const [selection, setSelection] = useState(() => {
+    return localStorage.getItem("sidebarSelection") || "";
+  });
 
-  console.log(selection);
+  // Update localStorage on state change
+  useEffect(() => {
+    localStorage.setItem("sidebarSelection", selection);
+  }, [selection]);
 
   return (
     <div className="flex flex-col flex-shrink-0 items-center bg-zinc-900 w-[20%] h-full text-white rounded-lg p-4">
