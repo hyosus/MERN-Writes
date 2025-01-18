@@ -1,6 +1,10 @@
 import catchErrors from "../utils/catchErrors.js";
 import { Folder } from "../models/folderModel.js";
-import { folderIdSchema, folderSchema } from "./folderSchema.js";
+import {
+  folderIdSchema,
+  folderSchema,
+  folderUpdateSchema,
+} from "./folderSchema.js";
 
 export const createFolder = catchErrors(async (req, res) => {
   // validate request
@@ -126,7 +130,7 @@ export const addNoteToFolder = catchErrors(async (req, res) => {
 });
 
 export const addJournalToFolder = catchErrors(async (req, res) => {
-  const { error, value } = folderSchema.validate(req.body);
+  const { error, value } = folderUpdateSchema.validate(req.body);
   if (error) {
     res.status(400).json({ message: error.details[0].message });
     throw new Error("Error in updating folder");

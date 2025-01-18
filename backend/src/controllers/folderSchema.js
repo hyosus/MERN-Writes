@@ -9,3 +9,9 @@ export const folderSchema = Joi.object({
   note: Joi.array().items(Joi.string()).optional().allow(null),
   journal: Joi.array().items(Joi.string()).optional().allow(null),
 });
+
+export const folderUpdateSchema = Joi.object({
+  colour: Joi.string().optional().allow(null),
+  note: Joi.array().items(Joi.string()).optional().allow(null),
+  journal: Joi.array().items(Joi.string()).optional().allow(null),
+});

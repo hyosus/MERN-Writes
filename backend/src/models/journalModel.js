@@ -21,11 +21,13 @@ const journalSchema = new Schema({
       required: false,
     },
   ],
-  folder: {
-    type: Schema.Types.ObjectId,
-    ref: "Folder",
-    required: false,
-  },
+  folders: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Folder",
+      required: false,
+    },
+  ],
   date: {
     type: Date,
     required: true,

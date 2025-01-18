@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./customCalendar.css";
 import useJournalMoods from "@/hooks/useJournalMood";
 import { FaHeart } from "react-icons/fa6";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, set } from "date-fns";
 import {
   Dialog,
   DialogClose,
@@ -40,11 +40,15 @@ import DeleteEntryModal from "@/components/journal/DeleteEntryModal";
 import useDeleteEntry from "@/hooks/useDeleteEntry";
 import FAB from "@/components/FAB";
 import useAddFolder from "@/hooks/useAddFolder";
+import useAddItemToFolder from "@/hooks/useAddItemToFolder";
+import FoldersModal from "@/components/journal/FoldersModal";
+import useJournalFolders from "@/hooks/useJournalFolders";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFABDialogOpen, setIsFABDialogOpen] = useState(false);
+  const [isFoldersDialogOpen, setIsFoldersDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [view, setView] = useState(() => {
     // get from local storage or default to Calendar
@@ -58,6 +62,9 @@ const JournalPage = () => {
   const { deleteEntry } = useDeleteEntry();
   const { addFolder } = useAddFolder();
   const [folderName, setFolderName] = useState("");
+  const { addItemToFolder } = useAddItemToFolder();
+  const { folders, isLoading: isFoldersLoading } = useJournalFolders();
+  const [selectedFolders, setSelectedFolders] = useState({});
 
   // Update localStorage when view changes
   useEffect(() => {
@@ -158,6 +165,49 @@ const JournalPage = () => {
     }
   };
 
+  const handleEllipsisClick = useCallback(
+    (entryId) => {
+      setSelectedEntryId(entryId);
+      console.log("entryId", entryId);
+    },
+    [setSelectedEntryId, setIsDeleteModalOpen]
+  );
+
+  const handleCheckboxChange = (folderId) => {
+    setSelectedFolders((prev) => {
+      // If folder was checked (true), it becomes unchecked (false)
+      // If folder wasn't checked (false/undefined), it becomes checked (true)
+      const newState = {
+        ...prev,
+        [folderId]: !prev[folderId],
+      };
+
+      console.log("Selected folders:", newState);
+      return newState;
+    });
+  };
+
+  const onFoldersModalClose = () => {
+    setIsFoldersDialogOpen(false);
+    setSelectedFolders({});
+  };
+
+  const onFoldersModalSubmit = () => {
+    Object.entries(selectedFolders).forEach(([folderId, isSelected]) => {
+      if (isSelected) {
+        console.log("Submitting:", { folderId, selectedEntryId });
+        addItemToFolder({
+          folderId,
+          journalId: selectedEntryId,
+        });
+      }
+    });
+    setIsFoldersDialogOpen(false);
+  };
+
+  if (isLoading || isJournalLoading || isFoldersLoading)
+    return <div>Loading...</div>;
+
   return (
     <>
       <div className="flex flex-col h-full w-full gap-4">
@@ -223,6 +273,9 @@ const JournalPage = () => {
                   setIsDeleteModalOpen={setIsDeleteModalOpen}
                   selectedEntryId={selectedEntryId}
                   setSelectedEntryId={setSelectedEntryId}
+                  handleEllipsisClick={handleEllipsisClick}
+                  isFoldersDialogOpen={isFoldersDialogOpen}
+                  setIsFoldersDialogOpen={setIsFoldersDialogOpen}
                 />
               ))
             ) : (
@@ -270,6 +323,15 @@ const JournalPage = () => {
         setIsDeleteModalOpen={setIsDeleteModalOpen}
         selectedEntryId={selectedEntryId}
         handleDelete={handleDelete}
+      />
+
+      <FoldersModal
+        folders={folders}
+        isDialogOpen={isFoldersDialogOpen}
+        setIsDialogOpen={onFoldersModalClose}
+        handleCheckboxChange={handleCheckboxChange}
+        selectedFolders={selectedFolders}
+        onFoldersModalSubmit={onFoldersModalSubmit}
       />
 
       <FAB

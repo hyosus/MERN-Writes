@@ -9,16 +9,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 const GridEntryBlock = ({
   groupedEntries,
   setIsDeleteModalOpen,
-  setSelectedEntryId,
+  handleEllipsisClick,
+  setIsFoldersDialogOpen,
 }) => {
-  const handleEllipsisClick = useCallback(
-    (entryId) => {
-      setSelectedEntryId(entryId);
-      console.log("entryId", entryId);
-    },
-    [setSelectedEntryId, setIsDeleteModalOpen]
-  );
-
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -64,7 +57,13 @@ const GridEntryBlock = ({
                               <Ellipsis />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-fit">
+                          <PopoverContent className="w-fit flex flex-col gap-4">
+                            <Button
+                              variant="ghost"
+                              onClick={() => setIsFoldersDialogOpen(true)}
+                            >
+                              Add to Folder
+                            </Button>
                             <Button
                               variant="destructive"
                               onClick={() => setIsDeleteModalOpen(true)}

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  addJournalToFolder,
   createJournal,
   deleteJournal,
   getAllJournals,
@@ -17,6 +18,7 @@ router.get("/mood", getJournalMood);
 router.get("/:id", getJournal);
 router.get("/date/:date", getJournalByDate);
 router.put("/:id", updateJournal);
+router.put("/add-folder/:journalId", addJournalToFolder);
 router.delete("/:id", deleteJournal);
 
 export default router;

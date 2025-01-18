@@ -167,9 +167,39 @@ export const updateJournal = catchErrors(async (req, res) => {
   if (title) journal.title = title;
   if (content) journal.content = content;
   if (mood) journal.mood = mood;
-  if (folder) journal.folder = folder;
+  if (folder) journal.folders = [...journal.folders, folder];
   if (date) journal.date = date;
 
+  await journal.save();
+  res.status(200).json(journal);
+});
+
+export const addJournalToFolder = catchErrors(async (req, res) => {
+  console.log("1. Folder id from params: ", req.params.journalId);
+  const { error, value } = journalIdSchema.validate(req.params.journalId);
+
+  console.log("2. Folder id after validation: ", value);
+
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in updating journal");
+  }
+  const id = value;
+
+  const journal = await Journal.findById(id);
+  if (!journal) {
+    res.status(404).json({ message: "Journal not found" });
+    throw new Error("Journal not found");
+  }
+
+  const { folderId } = req.body;
+  if (!folderId) {
+    res.status(400).json({ message: "Folder ID and Entry ID are required" });
+    throw new Error("Folder ID and Entry ID are required");
+  }
+
+  // Add the journal to the folder
+  journal.folders.push(folderId);
   await journal.save();
   res.status(200).json(journal);
 });

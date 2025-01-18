@@ -312,3 +312,25 @@ export const getFolder = async (folderId) => {
     throw new Error(error.response?.data?.message || "Failed to get folder");
   }
 };
+export const addJournalToFolder = async ({ folderId, journalId, journal }) => {
+  console.log("API call params:", { folderId, journalId, journal });
+
+  try {
+    // First update folder
+    const response = await axiosInstance.put(
+      `/folders/add-journal/${folderId}`,
+      { journal }
+    );
+
+    // Then update journal
+    const response2 = await axiosInstance.put(
+      `/journals/add-folder/${journalId}`,
+      { folderId }
+    );
+
+    return { folder: response.data, journal: response2.data };
+  } catch (error) {
+    console.error("API error:", error);
+    throw error;
+  }
+};
