@@ -1,17 +1,73 @@
 import { format } from "date-fns";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatContent } from "../../lib/FormatContent.js";
 import { Button } from "../ui/button";
 import { Ellipsis } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import DeleteEntryModal from "./DeleteEntryModal.jsx";
+import useDeleteEntry from "@/hooks/useDeleteEntry.js";
+import FoldersModal from "./FoldersModal.jsx";
+import useJournalFolders from "@/hooks/useJournalFolders.js";
+import useAddItemToFolder from "@/hooks/useAddItemToFolder.js";
 
-const GridEntryBlock = ({
-  groupedEntries,
-  setIsDeleteModalOpen,
-  handleEllipsisClick,
-  setIsFoldersDialogOpen,
-}) => {
+const GridEntryBlock = ({ groupedEntries }) => {
+  const [selectedEntryId, setSelectedEntryId] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isFoldersDialogOpen, setIsFoldersDialogOpen] = useState(false);
+  const [selectedFolders, setSelectedFolders] = useState({});
+
+  const { folders, isLoading: isFoldersLoading } = useJournalFolders();
+  const { addItemToFolder } = useAddItemToFolder();
+
+  const { deleteEntry } = useDeleteEntry();
+
+  const handleEllipsisClick = useCallback(
+    (entryId) => {
+      setSelectedEntryId(entryId);
+      console.log("entryId", entryId);
+    },
+    [setSelectedEntryId, setIsDeleteModalOpen]
+  );
+
+  const handleDelete = () => {
+    if (selectedEntryId) {
+      deleteEntry(selectedEntryId);
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const handleCheckboxChange = (folderId) => {
+    setSelectedFolders((prev) => {
+      // If folder was checked (true), it becomes unchecked (false)
+      // If folder wasn't checked (false/undefined), it becomes checked (true)
+      const newState = {
+        ...prev,
+        [folderId]: !prev[folderId],
+      };
+
+      console.log("Selected folders:", newState);
+      return newState;
+    });
+  };
+
+  const onFoldersModalClose = () => {
+    setIsFoldersDialogOpen(false);
+    setSelectedFolders({});
+  };
+
+  const onFoldersModalSubmit = () => {
+    Object.entries(selectedFolders).forEach(([folderId, isSelected]) => {
+      if (isSelected) {
+        console.log("Submitting:", { folderId, selectedEntryId });
+        addItemToFolder({
+          folderId,
+          journalId: selectedEntryId,
+        });
+      }
+    });
+    setIsFoldersDialogOpen(false);
+  };
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -81,6 +137,22 @@ const GridEntryBlock = ({
           </div>
         ))}
       </div>
+
+      <FoldersModal
+        folders={folders}
+        isDialogOpen={isFoldersDialogOpen}
+        setIsDialogOpen={onFoldersModalClose}
+        handleCheckboxChange={handleCheckboxChange}
+        selectedFolders={selectedFolders}
+        onFoldersModalSubmit={onFoldersModalSubmit}
+      />
+
+      <DeleteEntryModal
+        isDeleteModalOpen={isDeleteModalOpen}
+        setIsDeleteModalOpen={setIsDeleteModalOpen}
+        selectedEntryId={selectedEntryId}
+        handleDelete={handleDelete}
+      />
     </>
   );
 };

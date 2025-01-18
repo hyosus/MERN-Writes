@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./customCalendar.css";
@@ -7,25 +7,15 @@ import { FaHeart } from "react-icons/fa6";
 import { format, isSameDay, set } from "date-fns";
 import {
   Dialog,
-  DialogClose,
-  DialogFooter,
   DialogHeader,
   DialogContent,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import useJournals, { JOURNALS } from "@/hooks/useJournal";
+import useJournals from "@/hooks/useJournal";
 import JournalEntryBlock from "@/components/journal/JournalEntryBlock";
-import {
-  ArrowUpDown,
-  CalendarIcon,
-  Folder,
-  Heart,
-  LayoutGrid,
-  Plus,
-} from "lucide-react";
+import { ArrowUpDown, CalendarIcon, Heart, LayoutGrid } from "lucide-react";
 import GridEntryBlock from "@/components/journal/GridEntryBlock";
 import {
   DropdownMenu,
@@ -36,19 +26,13 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import DeleteEntryModal from "@/components/journal/DeleteEntryModal";
-import useDeleteEntry from "@/hooks/useDeleteEntry";
 import FAB from "@/components/FAB";
 import useAddFolder from "@/hooks/useAddFolder";
-import useAddItemToFolder from "@/hooks/useAddItemToFolder";
-import FoldersModal from "@/components/journal/FoldersModal";
-import useJournalFolders from "@/hooks/useJournalFolders";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFABDialogOpen, setIsFABDialogOpen] = useState(false);
-  const [isFoldersDialogOpen, setIsFoldersDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [view, setView] = useState(() => {
     // get from local storage or default to Calendar
@@ -57,14 +41,8 @@ const JournalPage = () => {
   const { journalMoods, isLoading, isError } = useJournalMoods();
   const { journals, isLoading: isJournalLoading } = useJournals();
   const [sortDirection, setSortDirection] = useState("desc");
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedEntryId, setSelectedEntryId] = useState(null);
-  const { deleteEntry } = useDeleteEntry();
   const { addFolder } = useAddFolder();
   const [folderName, setFolderName] = useState("");
-  const { addItemToFolder } = useAddItemToFolder();
-  const { folders, isLoading: isFoldersLoading } = useJournalFolders();
-  const [selectedFolders, setSelectedFolders] = useState({});
 
   // Update localStorage when view changes
   useEffect(() => {
@@ -158,55 +136,7 @@ const JournalPage = () => {
     return sortedGroupedEntries;
   };
 
-  const handleDelete = () => {
-    if (selectedEntryId) {
-      deleteEntry(selectedEntryId);
-      setIsDeleteModalOpen(false);
-    }
-  };
-
-  const handleEllipsisClick = useCallback(
-    (entryId) => {
-      setSelectedEntryId(entryId);
-      console.log("entryId", entryId);
-    },
-    [setSelectedEntryId, setIsDeleteModalOpen]
-  );
-
-  const handleCheckboxChange = (folderId) => {
-    setSelectedFolders((prev) => {
-      // If folder was checked (true), it becomes unchecked (false)
-      // If folder wasn't checked (false/undefined), it becomes checked (true)
-      const newState = {
-        ...prev,
-        [folderId]: !prev[folderId],
-      };
-
-      console.log("Selected folders:", newState);
-      return newState;
-    });
-  };
-
-  const onFoldersModalClose = () => {
-    setIsFoldersDialogOpen(false);
-    setSelectedFolders({});
-  };
-
-  const onFoldersModalSubmit = () => {
-    Object.entries(selectedFolders).forEach(([folderId, isSelected]) => {
-      if (isSelected) {
-        console.log("Submitting:", { folderId, selectedEntryId });
-        addItemToFolder({
-          folderId,
-          journalId: selectedEntryId,
-        });
-      }
-    });
-    setIsFoldersDialogOpen(false);
-  };
-
-  if (isLoading || isJournalLoading || isFoldersLoading)
-    return <div>Loading...</div>;
+  if (isLoading || isJournalLoading) return <div>Loading...</div>;
 
   return (
     <>
@@ -265,19 +195,7 @@ const JournalPage = () => {
             {isJournalLoading ? (
               <div>Loading journals...</div>
             ) : journals ? (
-              (console.log("2. Entry id: ", selectedEntryId),
-              (
-                <GridEntryBlock
-                  groupedEntries={groupEntriesByDate(journals)}
-                  isDeleteModalOpen={isDeleteModalOpen}
-                  setIsDeleteModalOpen={setIsDeleteModalOpen}
-                  selectedEntryId={selectedEntryId}
-                  setSelectedEntryId={setSelectedEntryId}
-                  handleEllipsisClick={handleEllipsisClick}
-                  isFoldersDialogOpen={isFoldersDialogOpen}
-                  setIsFoldersDialogOpen={setIsFoldersDialogOpen}
-                />
-              ))
+              <GridEntryBlock groupedEntries={groupEntriesByDate(journals)} />
             ) : (
               <div>No entries found</div>
             )}
@@ -317,22 +235,6 @@ const JournalPage = () => {
           </Link>
         </DialogContent>
       </Dialog>
-
-      <DeleteEntryModal
-        isDeleteModalOpen={isDeleteModalOpen}
-        setIsDeleteModalOpen={setIsDeleteModalOpen}
-        selectedEntryId={selectedEntryId}
-        handleDelete={handleDelete}
-      />
-
-      <FoldersModal
-        folders={folders}
-        isDialogOpen={isFoldersDialogOpen}
-        setIsDialogOpen={onFoldersModalClose}
-        handleCheckboxChange={handleCheckboxChange}
-        selectedFolders={selectedFolders}
-        onFoldersModalSubmit={onFoldersModalSubmit}
-      />
 
       <FAB
         isDialogOpen={isFABDialogOpen}
