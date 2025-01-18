@@ -194,3 +194,27 @@ export const deleteFolder = catchErrors(async (req, res) => {
 
   res.status(200).json({ message: "Folder deleted" });
 });
+
+export const removeJournalFromFolder = catchErrors(async (req, res) => {
+  const { error, value } = folderIdSchema.validate(req.params.folderId);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in removing journal from folders");
+  }
+
+  const folderId = value;
+
+  const { journalId } = req.body;
+  const folder = await Folder.findById(folderId);
+  if (!folder) {
+    res.status(404).json({ message: "Folder not found" });
+    throw new Error("Folder not found");
+  }
+
+  folder.journals = folder.journals.filter(
+    (journal) => journal.toString() !== journalId
+  );
+  await folder.save();
+
+  res.status(200).json({ message: "Journal removed from folders" });
+});
