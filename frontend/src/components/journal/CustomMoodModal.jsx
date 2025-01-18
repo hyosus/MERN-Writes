@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Circle, CirclePlus } from "lucide-react";
+import { Circle, CircleAlert, CirclePlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import EmojiPicker from "emoji-picker-react";
 import { ColorPicker } from "react-color-palette";
@@ -188,6 +188,12 @@ export const CustomMoodModal = ({
                 className="text-center w-[90%]"
               />
             </div>
+            {!customEmoji && (
+              <div className="flex gap-3 text-red-500">
+                <CircleAlert />
+                Please input an emoji!
+              </div>
+            )}
             <ColourCircles
               defaultColours={defaultColours}
               setCustomColour={setCustomColour}
@@ -224,7 +230,11 @@ export const CustomMoodModal = ({
                 Delete
               </Button>
             )}
-            <Button className="w-20" onClick={() => onSubmit()}>
+            <Button
+              className="w-20"
+              onClick={() => onSubmit()}
+              disabled={!customEmoji}
+            >
               Save
             </Button>
           </DialogFooter>
