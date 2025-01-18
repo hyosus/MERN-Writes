@@ -1,16 +1,31 @@
-import { Circle } from "lucide-react";
+import { defaultColours } from "@/constants/Colours";
+import { hexToColor } from "@/pages/journal/CreateEntryPage";
+import { Circle, CirclePlus } from "lucide-react";
 import React from "react";
 
-const ColourCircles = ({ colour, setCustomColour, hexToColor }) => {
+const ColourCircles = ({
+  setCustomColour,
+  setShowColorPicker,
+  showColorPicker,
+}) => {
   return (
-    <Circle
-      strokeWidth={1}
-      fill={colour}
-      className="cursor-pointer"
-      onClick={() => {
-        setCustomColour(hexToColor(colour));
-      }}
-    />
+    <div className="flex gap-2">
+      {defaultColours.map((colour) => (
+        <Circle
+          fill={colour}
+          className="cursor-pointer"
+          onClick={() => {
+            setCustomColour(hexToColor(colour));
+          }}
+        />
+      ))}
+      <CirclePlus
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowColorPicker(!showColorPicker);
+        }}
+      />
+    </div>
   );
 };
 

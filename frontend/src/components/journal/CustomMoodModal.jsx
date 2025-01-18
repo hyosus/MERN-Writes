@@ -18,6 +18,7 @@ import { createMood, deleteMood, getUser, updateMood } from "@/lib/api.js";
 import queryClient from "@/lib/queryClient";
 import { MOODS } from "@/hooks/useMoods";
 import { hexToColor } from "@/pages/journal/CreateEntryPage";
+import ColourCircles from "../ColourCircles";
 
 // Custom hook for handling clicks outside
 const useClickOutside = (ref, callback) => {
@@ -45,7 +46,6 @@ export const CustomMoodModal = ({
   showEmojiPicker,
   setShowEmojiPicker,
   onEmojiClick,
-  defaultColours,
   showColorPicker,
   setShowColorPicker,
   customColour,
@@ -63,21 +63,10 @@ export const CustomMoodModal = ({
   useClickOutside(emojiPickerRef, () => setShowEmojiPicker(false));
   useClickOutside(colorPickerRef, () => setShowColorPicker(false));
 
-  const colourCircles = (colour) => {
-    return (
-      <Circle
-        fill={colour}
-        className="cursor-pointer"
-        onClick={() => {
-          setCustomColour(hexToColor(colour));
-        }}
-      />
-    );
-  };
-
   const onSubmit = async () => {
     const user = await getUser();
     const userId = user._id;
+    console.log("moodId: ", moodId);
     if (moodId) {
       editMood({
         moodId,
@@ -98,6 +87,10 @@ export const CustomMoodModal = ({
         isCustom: true,
         userId,
       });
+      setCustomMood("Custom");
+      setCustomEmoji(null);
+      setCustomColour(hexToColor("#FFFFFF"));
+      setMoodId(null);
       onOpenChange(false);
     }
   };
@@ -194,15 +187,11 @@ export const CustomMoodModal = ({
                 className="text-center w-[90%]"
               />
             </div>
-            <div className="flex gap-2">
-              {defaultColours.map((colour) => colourCircles(colour))}
-              <CirclePlus
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowColorPicker(!showColorPicker);
-                }}
-              />
-            </div>
+            <ColourCircles
+              setCustomColour={setCustomColour}
+              setShowColorPicker={setShowColorPicker}
+              showColorPicker={showColorPicker}
+            />
             <div className="w-full">
               {showColorPicker && (
                 <div ref={colorPickerRef}>

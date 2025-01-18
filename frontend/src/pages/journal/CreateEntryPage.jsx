@@ -45,19 +45,13 @@ const CreateEntryPage = () => {
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [entryId, setEntryId] = useState(null); // Track the created entry ID
   const [title, setTitle] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [customMood, setCustomMood] = useState("Custom");
   const [customEmoji, setCustomEmoji] = useState(null);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const defaultColours = [
-    "#DF5959",
-    "#F5EA93",
-    "#A8EF81",
-    "#4D7ED9",
-    "#9E83FF",
-  ];
-  const [showColorPicker, setShowColorPicker] = useState(false);
-  const [customColour, setCustomColour] = useColor("#FFFFFF");
+  const [customColour, setCustomColour] = useState("#FFFFFF");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const [moodId, setMoodId] = useState(null);
   const [content, setContent] = useState("");
 
@@ -246,6 +240,8 @@ const CreateEntryPage = () => {
       <CustomMoodModal
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
+        setMoodId={setMoodId}
+        moodId={moodId}
         customMood={customMood}
         setCustomMood={setCustomMood}
         customEmoji={customEmoji}
@@ -253,13 +249,10 @@ const CreateEntryPage = () => {
         showEmojiPicker={showEmojiPicker}
         setShowEmojiPicker={setShowEmojiPicker}
         onEmojiClick={onEmojiClick}
-        defaultColours={defaultColours}
         showColorPicker={showColorPicker}
         setShowColorPicker={setShowColorPicker}
         customColour={customColour}
         setCustomColour={setCustomColour}
-        moodId={moodId}
-        setMoodId={setMoodId}
       />
 
       {/* Journal editor */}
