@@ -38,7 +38,7 @@ const NotesFolder = ({ filter }) => {
 
     return (
       <>
-        <Link to={`/folders/${folder._id}`}>
+        <Link to={`/folder/${folder._id}`}>
           <li onDrop={(e) => handleDrop(e, folder)} onDragOver={handleDragOver}>
             <div className="text-black bg-white rounded-xl p-4 min-w-[100px]">
               <FaFolder className="size-10"></FaFolder>
@@ -56,15 +56,15 @@ const NotesFolder = ({ filter }) => {
   return (
     <>
       <h1 className="text-2xl font-bold py-4">Folders</h1>
-      <ScrollArea
-        className={filter === "Folder" ? "flex-grow h-full" : "flex-grow h-fit"}
-      >
-        {folders && (
+      <ScrollArea className={filter === "Folder" ? "flex-grow h-fit" : "h-fit"}>
+        {folders && folders.length > 0 ? (
           <ul className="grid gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {folders.map((folder) => (
               <FolderBlock key={folder.id} folder={folder}></FolderBlock>
             ))}
           </ul>
+        ) : (
+          <p>No folders available</p>
         )}
       </ScrollArea>
     </>

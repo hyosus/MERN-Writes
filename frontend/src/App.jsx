@@ -15,6 +15,7 @@ import UpdateNotePage from "./pages/note/UpdateNotePage";
 import JournalPage from "./pages/journal/JournalPage";
 import CreateEntryPage from "./pages/journal/CreateEntryPage";
 import EditEntryPage from "./pages/journal/EditEntryPage";
+import FolderPage from "./pages/note/FolderPage";
 
 export const Home = () => {
   return <div>Home</div>;
@@ -36,6 +37,7 @@ function App() {
           <Route path="journal" element={<JournalPage />} />
           <Route path="journal/:entryId" element={<EditEntryPage />} />
           <Route path="create-entry/:date" element={<CreateEntryPage />} />
+          <Route path="folder/:folderId" element={<FolderPage />} />
         </Route>
       </Route>
 
