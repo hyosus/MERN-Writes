@@ -18,12 +18,13 @@ import { BookOpen, Circle, CirclePlus, Folder, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { defaultColours } from "@/constants/Colours";
+import { defaultColours, defaultPastelColours } from "@/constants/Colours";
 import { ColorPicker, useColor } from "react-color-palette";
 import { hexToColor } from "@/pages/journal/CreateEntryPage";
 import ColourCircles from "./ColourCircles";
 import { useRef, useState } from "react";
 import useClickOutside from "@/hooks/useClickOutside";
+import { FaFolder } from "react-icons/fa6";
 
 const FAB = ({
   folderType,
@@ -35,11 +36,11 @@ const FAB = ({
   setFolderName,
 }) => {
   const [customColour, setCustomColour] = useColor("#FFFFFF");
-  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showColourPicker, setShowColourPicker] = useState(false);
   const colorPickerRef = useRef(null);
 
   useClickOutside(colorPickerRef, () => {
-    setShowColorPicker(false);
+    setShowColourPicker(false);
   });
 
   const handleOnSubmit = (e) => {
@@ -88,36 +89,21 @@ const FAB = ({
         </DropdownMenu>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>New folder</DialogTitle>
+            <DialogTitle>
+              <div className="flex gap-2">
+                <FaFolder color={customColour.hex} />
+                New folder
+              </div>
+            </DialogTitle>
           </DialogHeader>
           <div className="flex justify-between">
             <Label>Name</Label>
-            <div className="flex gap-2">
-              {defaultColours.map((colour) => (
-                <ColourCircles
-                  colour={colour}
-                  setCustomColour={setCustomColour}
-                  hexToColor={hexToColor}
-                />
-              ))}
-              {showColorPicker || customColour.hex !== "#FFFFFF" ? (
-                <Circle
-                  strokeWidth={1}
-                  fill={customColour.hex}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowColorPicker(!showColorPicker);
-                  }}
-                />
-              ) : (
-                <CirclePlus
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowColorPicker(!showColorPicker);
-                  }}
-                />
-              )}
-            </div>
+            <ColourCircles
+              defaultColours={defaultPastelColours}
+              setCustomColour={setCustomColour}
+              setShowColourPicker={setShowColourPicker}
+              showColourPicker={showColourPicker}
+            />
           </div>
           <Input
             type="text"
@@ -126,7 +112,7 @@ const FAB = ({
             onKeyDown={(e) => e.key === "Enter" && handleOnSubmit(e)}
           />
 
-          {showColorPicker && (
+          {showColourPicker && (
             <div ref={colorPickerRef}>
               <ColorPicker
                 hideInput={["hsv", "hex"]}

@@ -45,7 +45,7 @@ const CreateEntryPage = () => {
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [entryId, setEntryId] = useState(null); // Track the created entry ID
   const [title, setTitle] = useState("");
-  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showColourPicker, setShowColourPicker] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [customMood, setCustomMood] = useState("Custom");
   const [customEmoji, setCustomEmoji] = useState(null);
@@ -249,8 +249,8 @@ const CreateEntryPage = () => {
         showEmojiPicker={showEmojiPicker}
         setShowEmojiPicker={setShowEmojiPicker}
         onEmojiClick={onEmojiClick}
-        showColorPicker={showColorPicker}
-        setShowColorPicker={setShowColorPicker}
+        showColourPicker={showColourPicker}
+        setShowColourPicker={setShowColourPicker}
         customColour={customColour}
         setCustomColour={setCustomColour}
       />

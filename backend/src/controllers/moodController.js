@@ -6,7 +6,7 @@ export const createMood = catchErrors(async (req, res) => {
   const { error, value } = moodSchema.validate(req.body);
   if (error) {
     res.status(400).json({ message: error.details[0].message });
-    throw new Error("Error in creating mood");
+    throw new Error("Error in creating mood: ", error.details[0].message);
   }
 
   const { name, emoji, colour, isCustom, userId } = value;

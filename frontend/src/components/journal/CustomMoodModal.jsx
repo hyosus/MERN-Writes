@@ -19,6 +19,7 @@ import queryClient from "@/lib/queryClient";
 import { MOODS } from "@/hooks/useMoods";
 import { hexToColor } from "@/pages/journal/CreateEntryPage";
 import ColourCircles from "../ColourCircles";
+import { defaultColours } from "@/constants/Colours";
 
 // Custom hook for handling clicks outside
 const useClickOutside = (ref, callback) => {
@@ -46,8 +47,8 @@ export const CustomMoodModal = ({
   showEmojiPicker,
   setShowEmojiPicker,
   onEmojiClick,
-  showColorPicker,
-  setShowColorPicker,
+  showColourPicker,
+  setShowColourPicker,
   customColour,
   setCustomColour,
   moodId,
@@ -61,7 +62,7 @@ export const CustomMoodModal = ({
 
   // Use the custom hook for each picker
   useClickOutside(emojiPickerRef, () => setShowEmojiPicker(false));
-  useClickOutside(colorPickerRef, () => setShowColorPicker(false));
+  useClickOutside(colorPickerRef, () => setShowColourPicker(false));
 
   const onSubmit = async () => {
     const user = await getUser();
@@ -188,12 +189,13 @@ export const CustomMoodModal = ({
               />
             </div>
             <ColourCircles
+              defaultColours={defaultColours}
               setCustomColour={setCustomColour}
-              setShowColorPicker={setShowColorPicker}
-              showColorPicker={showColorPicker}
+              setShowColourPicker={setShowColourPicker}
+              showColourPicker={showColourPicker}
             />
             <div className="w-full">
-              {showColorPicker && (
+              {showColourPicker && (
                 <div ref={colorPickerRef}>
                   <ColorPicker
                     hideInput={["hsv", "hex"]}

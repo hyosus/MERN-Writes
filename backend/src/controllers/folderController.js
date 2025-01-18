@@ -40,6 +40,29 @@ export const createFolder = catchErrors(async (req, res) => {
   res.status(201).json(newFolder);
 });
 
+export const updateFolder = catchErrors(async (req, res) => {
+  const { error, value } = folderIdSchema.validate(req.params.folderId);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in updating folder");
+  }
+
+  const folderId = value;
+
+  const folder = await Folder.findById(folderId);
+  if (!folder) {
+    res.status(404).json({ message: "Folder not found" });
+    throw new Error("Folder not found");
+  }
+
+  const { name, colour } = req.body;
+  if (name) folder.name = name;
+  if (colour) folder.colour = colour;
+
+  await folder.save();
+  res.status(200).json(folder);
+});
+
 export const getAllFolders = catchErrors(async (req, res) => {
   // get user
   const user = req.userId;

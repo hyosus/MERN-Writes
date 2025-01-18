@@ -6,9 +6,9 @@ export const defaultColours = [
   "#9E83FF",
 ];
 export const defaultPastelColours = [
-  "E8A2A2",
-  "F1ECC0",
-  "D1EFC1",
-  "C1C2EF",
-  "DEC1EF",
+  "#F5A7A7",
+  "#F4EDB4",
+  "#C9F3B2",
+  "#B3B4F4",
+  "#DDB5F4",
 ];

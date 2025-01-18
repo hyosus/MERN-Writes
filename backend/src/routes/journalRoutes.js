@@ -7,6 +7,7 @@ import {
   getJournal,
   getJournalByDate,
   getJournalMood,
+  getJournalsWithFolder,
   updateJournal,
 } from "../controllers/journalController.js";
 
@@ -16,6 +17,7 @@ router.post("/", createJournal);
 router.get("/", getAllJournals);
 router.get("/mood", getJournalMood);
 router.get("/:id", getJournal);
+router.get("/folder/:folderId", getJournalsWithFolder);
 router.get("/date/:date", getJournalByDate);
 router.put("/:id", updateJournal);
 router.put("/add-folder/:journalId", addJournalToFolder);

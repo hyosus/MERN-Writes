@@ -141,6 +141,26 @@ export const getJournalMood = catchErrors(async (req, res) => {
   res.status(200).json(result);
 });
 
+export const getJournalsWithFolder = catchErrors(async (req, res) => {
+  const { value, error } = journalIdSchema.validate(req.params.folderId);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in getting journals with folder");
+  }
+
+  const folderId = value;
+
+  const journals = await Journal.find({
+    userId: req.userId,
+    folders: folderId,
+  });
+  if (!journals) {
+    res.status(404).json({ message: "Journals not found" });
+    throw new Error("Journals not found");
+  }
+  res.status(200).json(journals);
+});
+
 export const updateJournal = catchErrors(async (req, res) => {
   const { error, value } = journalIdSchema.validate(req.params.id);
   if (error) {

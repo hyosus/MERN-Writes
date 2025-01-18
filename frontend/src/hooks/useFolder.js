@@ -5,8 +5,9 @@ export const FOLDER = "folder";
 
 const useFolder = (folderId, opts) => {
   const { data: folder, ...rest } = useQuery({
-    queryKey: [FOLDER],
+    queryKey: [FOLDER, folderId],
     queryFn: () => getFolder(folderId),
+    staleTime: 0,
     ...opts,
   });
 

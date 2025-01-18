@@ -36,7 +36,7 @@ const EditEntryPage = () => {
   const [customMood, setCustomMood] = useState("Custom");
   const [customEmoji, setCustomEmoji] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showColourPicker, setShowColourPicker] = useState(false);
   const [customColour, setCustomColour] = useColor("#FFFFFF");
   const [moodId, setMoodId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -204,8 +204,8 @@ const EditEntryPage = () => {
         showEmojiPicker={showEmojiPicker}
         setShowEmojiPicker={setShowEmojiPicker}
         onEmojiClick={onEmojiClick}
-        showColorPicker={showColorPicker}
-        setShowColorPicker={setShowColorPicker}
+        showColourPicker={showColourPicker}
+        setShowColourPicker={setShowColourPicker}
         customColour={customColour}
         setCustomColour={setCustomColour}
         moodId={moodId}

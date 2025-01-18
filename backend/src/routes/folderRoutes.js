@@ -7,6 +7,7 @@ import {
   addNoteToFolder,
   addJournalToFolder,
   getFolder,
+  updateFolder,
 } from "../controllers/folderController.js";
 
 const router = Router();
@@ -15,6 +16,8 @@ router.get("/", getAllFolders);
 router.get("/note", getNotesFolder);
 router.get("/journal", getJournalFolder);
 router.get("/:id", getFolder);
+
+router.put("/:folderId", updateFolder);
 
 router.put("/add-note/:id", addNoteToFolder);
 router.put("/add-journal/:id", addJournalToFolder);
