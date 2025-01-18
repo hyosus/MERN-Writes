@@ -8,6 +8,7 @@ import {
   getJournalByDate,
   getJournalMood,
   getJournalsWithFolder,
+  removeFolderFromJournals,
   updateJournal,
 } from "../controllers/journalController.js";
 
@@ -21,6 +22,7 @@ router.get("/folder/:folderId", getJournalsWithFolder);
 router.get("/date/:date", getJournalByDate);
 router.put("/:id", updateJournal);
 router.put("/add-folder/:journalId", addJournalToFolder);
+router.put("/remove-folder/:folderId", removeFolderFromJournals);
 router.delete("/:id", deleteJournal);
 
 export default router;

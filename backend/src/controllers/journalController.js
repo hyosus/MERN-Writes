@@ -7,6 +7,7 @@ import {
 import { Journal } from "../models/journalModel.js";
 import Joi from "joi";
 import { Types } from "mongoose";
+import { folderIdSchema } from "./folderSchema.js";
 
 export const createJournal = catchErrors(async (req, res) => {
   console.log("1. Received date in backend:", req.body.date);
@@ -233,4 +234,29 @@ export const deleteJournal = catchErrors(async (req, res) => {
 
   await Journal.findByIdAndDelete(id);
   res.status(200).json({ message: "Journal deleted" });
+});
+
+export const removeFolderFromJournals = catchErrors(async (req, res) => {
+  const { error, value } = folderIdSchema.validate(req.params.folderId);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in removing folder from journals");
+  }
+
+  const folderId = value;
+  const journals = await Journal.find({ folders: folderId });
+  if (!journals) {
+    res.status(404).json({ message: "Journals not found" });
+    throw new Error("Journals not found");
+  }
+
+  // Remove the folder from each journal
+  for (let journal of journals) {
+    journal.folders = journal.folders.filter(
+      (folder) => folder.toString() !== folderId
+    );
+    await journal.save();
+  }
+
+  res.status(200).json({ message: "Folder removed from journals" });
 });

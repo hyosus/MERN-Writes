@@ -5,13 +5,22 @@ import useFolder from "@/hooks/useFolder";
 import useJournalsInFolder from "@/hooks/useJournalsInFolder";
 import useUpdateFolder from "@/hooks/useUpdateFolder";
 import groupEntriesByDate from "@/lib/groupJournals";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useColor } from "react-color-palette";
 import { FaFolder } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
 import { hexToColor } from "./CreateEntryPage";
 import useClickOutside from "@/hooks/useClickOutside";
 import { defaultPastelColours } from "@/constants/Colours.js";
+import { Ellipsis, Trash } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import DeleteFolderModal from "@/components/DeleteFolderModal";
+import useDeleteFolder from "@/hooks/useDeleteFolder";
 
 const FolderPage = () => {
   const { folderId } = useParams();
@@ -29,7 +38,12 @@ const FolderPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [customColour, setCustomColour] = useColor("#FFFFFF");
   const [showColourPicker, setShowColourPicker] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedEntryId, setSelectedEntryId] = useState(null);
+  const [isFoldersDialogOpen, setIsFoldersDialogOpen] = useState(false);
+
   const defaultColours = defaultPastelColours;
+  const { deleteFolder } = useDeleteFolder();
 
   const colorPickerRef = useRef(null);
   useClickOutside(colorPickerRef, () => setShowColourPicker(false));
@@ -63,6 +77,21 @@ const FolderPage = () => {
     setIsDialogOpen(false);
   };
 
+  const handleDelete = () => {
+    if (folderId) {
+      deleteFolder(folderId);
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const handleEllipsisClick = useCallback(
+    (entryId) => {
+      setSelectedEntryId(entryId);
+      console.log("entryId", entryId);
+    },
+    [setSelectedEntryId, setIsDeleteModalOpen]
+  );
+
   if (isLoading || isLoadingJournals) return <div>Loading...</div>;
   if (isError || isErrorJournals) return <div>Error loading folder</div>;
 
@@ -70,6 +99,7 @@ const FolderPage = () => {
     <div className="flex flex-col gap-4">
       <h1 className="flex gap-2 items-center pb-4">
         <FaFolder
+          className="cursor-pointer hover:opacity-80"
           color={folder.colour}
           onClick={() => {
             setIsDialogOpen(true);
@@ -87,14 +117,39 @@ const FolderPage = () => {
         ) : (
           <span
             onClick={handleEdit}
-            className="cursor-pointer hover:opacity-80"
+            className="cursor-pointer hover:opacity-80 pr-5"
           >
             {folder.name}
           </span>
         )}
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Ellipsis size={25} className="cursor-pointer" />
+          </PopoverTrigger>
+          <PopoverContent className="w-fit flex flex-col gap-4">
+            {/* <Button
+              variant="ghost"
+              onClick={() => setIsFoldersDialogOpen(true)}
+            >
+              Add to Folder
+            </Button> */}
+            <Button
+              variant="destructive"
+              onClick={() => setIsDeleteModalOpen(true)}
+            >
+              <Trash />
+              Delete
+            </Button>
+          </PopoverContent>
+        </Popover>
       </h1>
 
-      <GridEntryBlock groupedEntries={groupEntriesByDate(journals)} />
+      <GridEntryBlock
+        groupedEntries={groupEntriesByDate(journals)}
+        handleEllipsisClick={handleEllipsisClick}
+        setIsFoldersDialogOpen={setIsFoldersDialogOpen}
+      />
       <EditFolderModal
         defaultColours={defaultColours}
         isDialogOpen={isDialogOpen}
@@ -105,6 +160,12 @@ const FolderPage = () => {
         setShowColourPicker={setShowColourPicker}
         colorPickerRef={colorPickerRef}
         handleSave={handleSave}
+      />
+
+      <DeleteFolderModal
+        isDeleteModalOpen={isDeleteModalOpen}
+        setIsDeleteModalOpen={setIsDeleteModalOpen}
+        handleDelete={handleDelete}
       />
     </div>
   );

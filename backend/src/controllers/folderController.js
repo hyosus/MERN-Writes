@@ -180,3 +180,17 @@ export const addJournalToFolder = catchErrors(async (req, res) => {
 
   res.status(200).json(folder);
 });
+
+export const deleteFolder = catchErrors(async (req, res) => {
+  const { error, value } = folderIdSchema.validate(req.params.folderId);
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+    throw new Error("Error in deleting folder");
+  }
+
+  const id = value;
+
+  await Folder.findByIdAndDelete(id);
+
+  res.status(200).json({ message: "Folder deleted" });
+});

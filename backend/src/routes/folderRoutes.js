@@ -8,6 +8,7 @@ import {
   addJournalToFolder,
   getFolder,
   updateFolder,
+  deleteFolder,
 } from "../controllers/folderController.js";
 
 const router = Router();
@@ -23,5 +24,6 @@ router.put("/add-note/:id", addNoteToFolder);
 router.put("/add-journal/:id", addJournalToFolder);
 
 router.post("/", createFolder);
+router.delete("/:folderId", deleteFolder);
 
 export default router;

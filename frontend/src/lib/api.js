@@ -356,3 +356,18 @@ export const addJournalToFolder = async ({ folderId, journalId, journal }) => {
     throw error;
   }
 };
+
+export const deleteFolder = async (folderId) => {
+  try {
+    // First remove folder from all journals
+    const journals = await axiosInstance.put(
+      `/journals/remove-folder/${folderId}`
+    );
+
+    // Then delete folder
+    const response = await axiosInstance.delete(`/folders/${folderId}`);
+    return { response, journals };
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to delete folder");
+  }
+};
