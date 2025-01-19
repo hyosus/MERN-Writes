@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  addJournalToFolder,
   createJournal,
   deleteJournal,
   getAllJournals,
@@ -8,8 +7,6 @@ import {
   getJournalByDate,
   getJournalMood,
   getJournalsWithFolder,
-  removeFolderFromJournals,
-  removeJournalFromFolder,
   updateJournal,
 } from "../controllers/journalController.js";
 
@@ -22,9 +19,6 @@ router.get("/:id", getJournal);
 router.get("/folder/:folderId", getJournalsWithFolder);
 router.get("/date/:date", getJournalByDate);
 router.put("/:id", updateJournal);
-router.put("/add-folder/:journalId", addJournalToFolder);
-router.put("/remove-folder/:folderId", removeFolderFromJournals);
-router.put("/remove-from-folder/:journalId", removeJournalFromFolder);
 router.delete("/:id", deleteJournal);
 
 export default router;

@@ -1,4 +1,4 @@
-const groupEntriesByDate = (entries) => {
+const groupEntriesByDate = (entries, sortDirection = "desc") => {
   if (!entries) return {};
 
   const grouped = entries.reduce((acc, entry) => {

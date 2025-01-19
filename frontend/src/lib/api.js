@@ -230,10 +230,10 @@ export const createEntry = async (data) => {
   }
 };
 
-export const updateEntry = async ({ entryId, data }) => {
+export const updateEntry = async ({ journalId, data }) => {
   try {
-    console.log(`/journals/${entryId}`);
-    const response = await axiosInstance.put(`/journals/${entryId}`, data);
+    console.log(`/journals/${journalId}`);
+    const response = await axiosInstance.put(`/journals/${journalId}`, data);
     return response;
   } catch (error) {
     console.log(error);
@@ -259,18 +259,18 @@ export const getEntriesWithFolder = async (folderId) => {
   }
 };
 
-export const getEntry = async (entryId) => {
+export const getEntry = async (journalId) => {
   try {
-    const response = await axiosInstance.get(`/journals/${entryId}`);
+    const response = await axiosInstance.get(`/journals/${journalId}`);
     return response;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to get entry");
   }
 };
 
-export const deleteEntry = async (entryId) => {
+export const deleteEntry = async (journalId) => {
   try {
-    const response = await axiosInstance.delete(`/journals/${entryId}`);
+    const response = await axiosInstance.delete(`/journals/${journalId}`);
     return response;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to delete entry");
@@ -322,38 +322,12 @@ export const getFolder = async (folderId) => {
   }
 };
 
-export const updateFolder = async ({ folderId, name, colour }) => {
+export const updateFolder = async ({ folderId, data }) => {
   try {
-    const response = await axiosInstance.put(`/folders/${folderId}`, {
-      name,
-      colour,
-    });
+    const response = await axiosInstance.put(`/folders/${folderId}`, data);
     return response;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to update folder");
-  }
-};
-
-export const addJournalToFolder = async ({ folderId, journalId, journal }) => {
-  console.log("API call params:", { folderId, journalId, journal });
-
-  try {
-    // First update folder
-    const response = await axiosInstance.put(
-      `/folders/add-journal/${folderId}`,
-      { journal }
-    );
-
-    // Then update journal
-    const response2 = await axiosInstance.put(
-      `/journals/add-folder/${journalId}`,
-      { folderId }
-    );
-
-    return { folder: response.data, journal: response2.data };
-  } catch (error) {
-    console.error("API error:", error);
-    throw error;
   }
 };
 
@@ -372,24 +346,11 @@ export const deleteFolder = async (folderId) => {
   }
 };
 
-export const removeJournalFromFolder = async ({ folderId, journalId }) => {
+export const getJournal = async (journalId) => {
   try {
-    // remove from [folders] in journal
-    const response = await axiosInstance.put(
-      `/journals/remove-from-folder/${journalId}`,
-      { folderId }
-    );
-
-    // remove from [journals] in folder
-    const response2 = await axiosInstance.put(
-      `/folders/remove-journal/${folderId}`,
-      { journalId }
-    );
-
-    return { response, response2 };
+    const response = await axiosInstance.get(`/journals/${journalId}`);
+    return response;
   } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Failed to remove journal from folder"
-    );
+    throw new Error(error.response?.data?.message || "Failed to get journal");
   }
 };

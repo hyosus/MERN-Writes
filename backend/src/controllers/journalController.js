@@ -7,7 +7,6 @@ import {
 import { Journal } from "../models/journalModel.js";
 import Joi from "joi";
 import { Types } from "mongoose";
-import { folderIdSchema } from "./folderSchema.js";
 
 export const createJournal = catchErrors(async (req, res) => {
   console.log("1. Received date in backend:", req.body.date);
@@ -184,43 +183,13 @@ export const updateJournal = catchErrors(async (req, res) => {
     throw new Error("Journal not found");
   }
 
-  const { title, content, mood, folder, date } = valueBody;
+  const { title, content, mood, folders, date } = valueBody;
   if (title) journal.title = title;
   if (content) journal.content = content;
   if (mood) journal.mood = mood;
-  if (folder) journal.folders = [...journal.folders, folder];
   if (date) journal.date = date;
+  if (folders) journal.folders = folders;
 
-  await journal.save();
-  res.status(200).json(journal);
-});
-
-export const addJournalToFolder = catchErrors(async (req, res) => {
-  console.log("1. Folder id from params: ", req.params.journalId);
-  const { error, value } = journalIdSchema.validate(req.params.journalId);
-
-  console.log("2. Folder id after validation: ", value);
-
-  if (error) {
-    res.status(400).json({ message: error.details[0].message });
-    throw new Error("Error in updating journal");
-  }
-  const id = value;
-
-  const journal = await Journal.findById(id);
-  if (!journal) {
-    res.status(404).json({ message: "Journal not found" });
-    throw new Error("Journal not found");
-  }
-
-  const { folderId } = req.body;
-  if (!folderId) {
-    res.status(400).json({ message: "Folder ID and Entry ID are required" });
-    throw new Error("Folder ID and Entry ID are required");
-  }
-
-  // Add the journal to the folder
-  journal.folders.push(folderId);
   await journal.save();
   res.status(200).json(journal);
 });
@@ -234,59 +203,4 @@ export const deleteJournal = catchErrors(async (req, res) => {
 
   await Journal.findByIdAndDelete(id);
   res.status(200).json({ message: "Journal deleted" });
-});
-
-export const removeFolderFromJournals = catchErrors(async (req, res) => {
-  const { error, value } = folderIdSchema.validate(req.params.folderId);
-  if (error) {
-    res.status(400).json({ message: error.details[0].message });
-    throw new Error("Error in removing folder from journals");
-  }
-
-  const folderId = value;
-  const journals = await Journal.find({ folders: folderId });
-  if (!journals) {
-    res.status(404).json({ message: "Journals not found" });
-    throw new Error("Journals not found");
-  }
-
-  // Remove the folder from each journal
-  for (let journal of journals) {
-    journal.folders = journal.folders.filter(
-      (folder) => folder.toString() !== folderId
-    );
-    await journal.save();
-  }
-
-  res.status(200).json({ message: "Folder removed from journals" });
-});
-
-export const removeJournalFromFolder = catchErrors(async (req, res) => {
-  const { error, value } = journalIdSchema.validate(req.params.journalId);
-  if (error) {
-    res.status(400).json({ message: error.details[0].message });
-    throw new Error("Error in removing journal from folder");
-  }
-
-  const journalId = value;
-  const { folderId } = req.body;
-
-  console.log("Removing folderId:", folderId, "from journalId:", journalId);
-
-  const journal = await Journal.findById(journalId);
-  if (!journal) {
-    res.status(404).json({ message: "Journal not found" });
-    throw new Error("Journal not found");
-  }
-
-  console.log("Current folders:", journal.folders);
-
-  // Find and remove the matching folderId
-  journal.folders = journal.folders.filter((id) => id.toString() !== folderId);
-
-  console.log("Updated folders:", journal.folders);
-
-  await journal.save();
-
-  res.status(200).json(journal);
 });

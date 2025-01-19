@@ -5,10 +5,10 @@ import { JOURNALS } from "@/hooks/useJournal";
 const useDeleteEntry = () => {
   const queryClient = useQueryClient();
   const { mutate, ...rest } = useMutation({
-    mutationFn: (entryId) => deleteEntry(entryId),
-    onSuccess: (_, entryId) => {
+    mutationFn: (journalId) => deleteEntry(journalId),
+    onSuccess: (_, journalId) => {
       queryClient.setQueryData([JOURNALS], (cache) =>
-        cache.filter((entry) => entry._id !== entryId)
+        cache.filter((entry) => entry._id !== journalId)
       );
     },
   });

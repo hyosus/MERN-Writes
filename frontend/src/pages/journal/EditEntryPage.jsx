@@ -26,7 +26,7 @@ import DeleteEntryModal from "@/components/journal/DeleteEntryModal";
 import useDeleteEntry from "@/hooks/useDeleteEntry";
 
 const EditEntryPage = () => {
-  const { entryId } = useParams();
+  const { journalId } = useParams();
   const [date, setDate] = useState(null);
   const [selectedMoods, setSelectedMoods] = useState([]);
   const [title, setTitle] = useState("");
@@ -47,8 +47,8 @@ const EditEntryPage = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["entry", entryId],
-    queryFn: () => getEntry(entryId),
+    queryKey: ["entry", journalId],
+    queryFn: () => getEntry(journalId),
   });
 
   const { mutate: editEntry } = useMutation({
@@ -127,7 +127,7 @@ const EditEntryPage = () => {
       // remove from selectedMoods
       setSelectedMoods((prev) => prev.filter((id) => id !== moodId));
       editEntry({
-        entryId,
+        journalId,
         data: {
           mood: selectedMoods.filter((id) => id !== moodId),
           date: formattedDate, // Send YYYY-MM-DD string
@@ -138,7 +138,7 @@ const EditEntryPage = () => {
       setSelectedMoods((prev) => [...prev, moodId]);
 
       editEntry({
-        entryId,
+        journalId,
         data: {
           mood: [...selectedMoods, moodId],
           date: formattedDate,
@@ -168,7 +168,7 @@ const EditEntryPage = () => {
     setTitle(newTitle);
 
     editEntry({
-      entryId,
+      journalId,
       data: { title: newTitle, date: formattedDate },
     });
   };
@@ -179,7 +179,7 @@ const EditEntryPage = () => {
     const formattedDate = formatDate(newDate);
 
     editEntry({
-      entryId,
+      journalId,
       data: { date: formattedDate },
     });
 
@@ -187,8 +187,8 @@ const EditEntryPage = () => {
   };
 
   const handleDelete = () => {
-    if (entryId) {
-      deleteEntry(entryId);
+    if (journalId) {
+      deleteEntry(journalId);
     }
   };
 
@@ -280,7 +280,7 @@ const EditEntryPage = () => {
       </div>
       <JournalsRTE
         date={formatDate(new Date(date))}
-        entryId={entryId}
+        journalId={journalId}
         setEntryId={() => {}} // Not needed for edit mode
         initialContent={content}
       />
@@ -288,7 +288,7 @@ const EditEntryPage = () => {
       <DeleteEntryModal
         isDeleteModalOpen={isDeleteModalOpen}
         setIsDeleteModalOpen={setIsDeleteModalOpen}
-        selectedEntryId={entryId}
+        selectedEntryId={journalId}
         handleDelete={handleDelete}
       />
     </>

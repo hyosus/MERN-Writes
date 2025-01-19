@@ -43,7 +43,7 @@ const CreateEntryPage = () => {
   const { date } = useParams();
   const [customDate, setCustomDate] = useState(null);
   const [selectedMoods, setSelectedMoods] = useState([]);
-  const [entryId, setEntryId] = useState(null); // Track the created entry ID
+  const [journalId, setEntryId] = useState(null); // Track the created entry ID
   const [title, setTitle] = useState("");
   const [showColourPicker, setShowColourPicker] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -96,9 +96,9 @@ const CreateEntryPage = () => {
     if (selectedMoods.includes(moodId)) {
       // remove from selectedMoods
       setSelectedMoods((prev) => prev.filter((id) => id !== moodId));
-      if (entryId) {
+      if (journalId) {
         editEntry({
-          entryId,
+          journalId,
           data: {
             mood: selectedMoods.filter((id) => id !== moodId),
             date: formattedDate, // Send YYYY-MM-DD string
@@ -114,9 +114,9 @@ const CreateEntryPage = () => {
       // add to selectedMoods
       setSelectedMoods((prev) => [...prev, moodId]);
 
-      if (entryId) {
+      if (journalId) {
         editEntry({
-          entryId,
+          journalId,
           data: {
             mood: [...selectedMoods, moodId],
             date: formattedDate,
@@ -138,9 +138,9 @@ const CreateEntryPage = () => {
     const newTitle = e.target.value;
     setTitle(newTitle);
 
-    if (entryId) {
+    if (journalId) {
       editEntry({
-        entryId,
+        journalId,
         data: { title: newTitle, date: formattedDate },
       });
     } else {
@@ -267,7 +267,7 @@ const CreateEntryPage = () => {
       </div>
       <JournalsRTE
         date={customDate ? formatDate(customDate) : formatDate(new Date(date))}
-        entryId={entryId}
+        journalId={journalId}
         setEntryId={setEntryId}
         content={content}
         setContent={setContent}

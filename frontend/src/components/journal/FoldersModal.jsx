@@ -32,7 +32,7 @@ const FoldersModal = ({
               <div className="flex gap-2 items-center">
                 <Checkbox
                   id={folder._id}
-                  checked={selectedFolders[folder._id] || false}
+                  checked={selectedFolders.includes(folder._id)}
                   onCheckedChange={() => handleCheckboxChange(folder._id)}
                 />
                 <label className="flex items-center gap-1" htmlFor={folder._id}>

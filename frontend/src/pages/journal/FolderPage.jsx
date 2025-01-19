@@ -85,9 +85,9 @@ const FolderPage = () => {
   };
 
   const handleEllipsisClick = useCallback(
-    (entryId) => {
-      setSelectedEntryId(entryId);
-      console.log("entryId", entryId);
+    (journalId) => {
+      setSelectedEntryId(journalId);
+      console.log("journalId", journalId);
     },
     [setSelectedEntryId, setIsDeleteModalOpen]
   );

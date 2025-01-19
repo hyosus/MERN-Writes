@@ -8,7 +8,7 @@ import { createEntry, updateEntry } from "@/lib/api.js";
 import queryClient from "@/lib/queryClient";
 import { JOURNALS } from "@/hooks/useJournal";
 
-const JournalsRTE = ({ date, entryId, setEntryId, initialContent }) => {
+const JournalsRTE = ({ date, journalId, setEntryId, initialContent }) => {
   const [content, setContent] = useState(initialContent || "");
 
   const editor = useEditor(
@@ -24,16 +24,19 @@ const JournalsRTE = ({ date, entryId, setEntryId, initialContent }) => {
         const updatedContent = editor.getHTML(); // get editor's content
         setContent(updatedContent);
 
-        if (entryId) {
+        if (journalId) {
           // edit
-          editEntry({ entryId, data: { content: updatedContent, date: date } });
+          editEntry({
+            journalId,
+            data: { content: updatedContent, date: date },
+          });
         } else {
           // create
           addEntry({ content: updatedContent, date: date });
         }
       },
     },
-    [entryId]
+    [journalId]
   );
 
   const { mutate: addEntry } = useMutation({
@@ -56,13 +59,13 @@ const JournalsRTE = ({ date, entryId, setEntryId, initialContent }) => {
   });
 
   useEffect(() => {
-    if (entryId) {
-      setEntryId(entryId);
+    if (journalId) {
+      setEntryId(journalId);
     }
     if (editor && initialContent) {
       editor.commands.setContent(initialContent);
     }
-  }, [editor, entryId, initialContent]);
+  }, [editor, journalId, initialContent]);
 
   return (
     <div className="CONTAINER flex flex-col h-full flex-grow-1">

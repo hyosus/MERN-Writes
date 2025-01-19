@@ -9,8 +9,9 @@ import DeleteEntryModal from "./DeleteEntryModal.jsx";
 import useDeleteEntry from "@/hooks/useDeleteEntry.js";
 import FoldersModal from "./FoldersModal.jsx";
 import useJournalFolders from "@/hooks/useJournalFolders.js";
-import useAddItemToFolder from "@/hooks/useAddItemToFolder.js";
-import useRemoveJournalFromFolder from "@/hooks/useRemoveJournalFromFolder.js";
+import useUpdateJournal from "@/hooks/useUpdateJournal.js";
+import useJournalById from "@/hooks/useJournalById.js";
+import useUpdateFolder from "@/hooks/useUpdateFolder.js";
 
 const GridEntryBlock = ({ groupedEntries }) => {
   const location = useLocation();
@@ -18,20 +19,22 @@ const GridEntryBlock = ({ groupedEntries }) => {
   const [selectedEntryId, setSelectedEntryId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isFoldersDialogOpen, setIsFoldersDialogOpen] = useState(false);
-  const [selectedFolders, setSelectedFolders] = useState({});
+  const [selectedFolders, setSelectedFolders] = useState([]);
   const [isInFolder, setIsInFolder] = useState(false);
   const [folderId, setFolderId] = useState(null);
 
   const { folders, isLoading: isFoldersLoading } = useJournalFolders();
-  const { addItemToFolder } = useAddItemToFolder();
-  const { removeJournalFromFolder } = useRemoveJournalFromFolder();
+  const { journal, isLoading, isError } = useJournalById(selectedEntryId);
+
+  const { updateJournal } = useUpdateJournal();
+  const { updateFolder } = useUpdateFolder();
 
   const { deleteEntry } = useDeleteEntry();
 
   const handleEllipsisClick = useCallback(
-    (entryId) => {
-      setSelectedEntryId(entryId);
-      console.log("entryId", entryId);
+    (journalId) => {
+      setSelectedEntryId(journalId);
+      console.log("journalId", journalId);
     },
     [setSelectedEntryId, setIsDeleteModalOpen]
   );
@@ -45,39 +48,72 @@ const GridEntryBlock = ({ groupedEntries }) => {
 
   const handleCheckboxChange = (folderId) => {
     setSelectedFolders((prev) => {
-      // If folder was checked (true), it becomes unchecked (false)
-      // If folder wasn't checked (false/undefined), it becomes checked (true)
-      const newState = {
-        ...prev,
-        [folderId]: !prev[folderId],
-      };
-
-      console.log("Selected folders:", newState);
-      return newState;
+      if (Array.isArray(prev)) {
+        if (prev.includes(folderId)) {
+          return prev.filter((id) => id !== folderId);
+        } else {
+          return [...prev, folderId];
+        }
+      }
+      return [];
     });
   };
 
   const onFoldersModalClose = () => {
     setIsFoldersDialogOpen(false);
-    setSelectedFolders({});
+    setSelectedFolders([]);
   };
 
   const onFoldersModalSubmit = () => {
-    Object.entries(selectedFolders).forEach(([folderId, isSelected]) => {
-      if (isSelected) {
-        console.log("Submitting:", { folderId, selectedEntryId });
-        addItemToFolder({
-          folderId,
-          journalId: selectedEntryId,
-        });
-      }
+    updateJournal({
+      journalId: selectedEntryId,
+      data: {
+        folders: selectedFolders,
+        date: format(journal.date, "yyyy-MM-dd"),
+      },
     });
+
+    const selectedFoldersData = folders.filter((folder) =>
+      selectedFolders.includes(folder._id)
+    );
+    selectedFoldersData.forEach((folder) => handleUpdateFolder(folder));
     setIsFoldersDialogOpen(false);
   };
 
+  const handleUpdateFolder = (folder) => {
+    console.log("FOLDER: ", folder);
+    const initialJournals = folder.journals || [];
+    if (Array.isArray(folder.journals)) {
+      if (initialJournals.includes(selectedEntryId)) {
+        initialJournals.filter((id) => id !== selectedEntryId);
+      } else {
+        initialJournals.push(selectedEntryId);
+      }
+    }
+
+    updateFolder({ folderId: folder._id, data: { journals: initialJournals } });
+  };
+
   const handleRemoveFromFolder = () => {
-    console.log("Removing from folder:", { folderId, selectedEntryId });
-    removeJournalFromFolder({ folderId, journalId: selectedEntryId });
+    // Update the journal to remove the folder
+    updateJournal({
+      journalId: selectedEntryId,
+      data: {
+        folders: journal.folders.filter((id) => id !== folderId),
+        date: format(journal.date, "yyyy-MM-dd"),
+      },
+    });
+
+    const folder = folders.find((folder) => folder._id === folderId);
+
+    // Update the folder to remove the journal
+    updateFolder({
+      folderId,
+      data: {
+        journals: folder.journals.filter((id) => id !== selectedEntryId),
+      },
+    });
+
     setIsFoldersDialogOpen(false);
   };
 
@@ -86,9 +122,14 @@ const GridEntryBlock = ({ groupedEntries }) => {
     if (location.pathname.includes("/journal/folder")) {
       setIsInFolder(true);
       setFolderId(location.pathname.split("/").pop());
-      console.log("fodlerID, ", folderId);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (journal) {
+      setSelectedFolders(journal.folders || []);
+    }
+  }, [selectedEntryId, journal, setSelectedFolders]);
 
   return (
     <>
@@ -182,7 +223,10 @@ const GridEntryBlock = ({ groupedEntries }) => {
         setIsDialogOpen={onFoldersModalClose}
         handleCheckboxChange={handleCheckboxChange}
         selectedFolders={selectedFolders}
+        setSelectedFolders={setSelectedFolders}
         onFoldersModalSubmit={onFoldersModalSubmit}
+        selectedEntryId={selectedEntryId}
+        journal={journal}
       />
 
       <DeleteEntryModal
