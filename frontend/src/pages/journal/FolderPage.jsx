@@ -41,6 +41,7 @@ const FolderPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedEntryId, setSelectedEntryId] = useState(null);
   const [isFoldersDialogOpen, setIsFoldersDialogOpen] = useState(false);
+  const sortDirection = localStorage.getItem("sortDirection") || "desc";
 
   const defaultColours = defaultPastelColours;
   const { deleteFolder } = useDeleteFolder();
@@ -146,10 +147,11 @@ const FolderPage = () => {
       </h1>
 
       <GridEntryBlock
-        groupedEntries={groupEntriesByDate(journals)}
+        groupedEntries={groupEntriesByDate(journals, sortDirection)}
         handleEllipsisClick={handleEllipsisClick}
         setIsFoldersDialogOpen={setIsFoldersDialogOpen}
       />
+
       <EditFolderModal
         defaultColours={defaultColours}
         isDialogOpen={isDialogOpen}

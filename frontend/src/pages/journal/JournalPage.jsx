@@ -28,26 +28,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import FAB from "@/components/FAB";
 import useAddFolder from "@/hooks/useAddFolder";
+import groupEntriesByDate from "@/lib/groupJournals";
 
 const JournalPage = () => {
   const [value, onChange] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFABDialogOpen, setIsFABDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const { journalMoods, isLoading, isError } = useJournalMoods();
+  const { journals, isLoading: isJournalLoading } = useJournals();
+  const { addFolder } = useAddFolder();
+  const [folderName, setFolderName] = useState("");
+
   const [view, setView] = useState(() => {
     // get from local storage or default to Calendar
     return localStorage.getItem("journalView") || "Calendar";
   });
-  const { journalMoods, isLoading, isError } = useJournalMoods();
-  const { journals, isLoading: isJournalLoading } = useJournals();
-  const [sortDirection, setSortDirection] = useState("desc");
-  const { addFolder } = useAddFolder();
-  const [folderName, setFolderName] = useState("");
 
-  // Update localStorage when view changes
-  useEffect(() => {
-    localStorage.setItem("journalView", view);
-  }, [view]);
+  const [sortDirection, setSortDirection] = useState(() => {
+    return localStorage.getItem("sortDirection") || "desc";
+  });
 
   const tileContent = ({ date, view }) => {
     if (view === "month") {
@@ -100,41 +100,14 @@ const JournalPage = () => {
       isSameDay(new Date(entry.date), selectedDate)
     ) || [];
 
-  // Creates structure: { year: { month: [entries] } }
-  const groupEntriesByDate = (entries) => {
-    if (!entries) return {};
+  // Update localStorage when view changes
+  useEffect(() => {
+    localStorage.setItem("journalView", view);
+  }, [view]);
 
-    const grouped = entries.reduce((acc, entry) => {
-      const date = new Date(entry.date);
-      const year = date.getFullYear();
-      const month = date.toLocaleString("default", { month: "long" });
-
-      if (!acc[year]) acc[year] = {};
-      if (!acc[year][month]) acc[year][month] = [];
-      acc[year][month].push(entry);
-      return acc;
-    }, {});
-
-    // Sort by year
-    const sortedYears = Object.keys(grouped).sort((a, b) => {
-      if (sortDirection === "desc") {
-        return parseInt(b) - parseInt(a);
-      } else {
-        return parseInt(a) - parseInt(b);
-      }
-    });
-
-    // Create a new array with sorted entries
-    const sortedGroupedEntries = sortedYears.map((year) => ({
-      year,
-      months: Object.entries(grouped[year]).map(([month, entries]) => ({
-        month,
-        entries,
-      })),
-    }));
-
-    return sortedGroupedEntries;
-  };
+  useEffect(() => {
+    localStorage.setItem("sortDirection", sortDirection);
+  }, [sortDirection]);
 
   if (isLoading || isJournalLoading) return <div>Loading...</div>;
 
@@ -195,7 +168,9 @@ const JournalPage = () => {
             {isJournalLoading ? (
               <div>Loading journals...</div>
             ) : journals ? (
-              <GridEntryBlock groupedEntries={groupEntriesByDate(journals)} />
+              <GridEntryBlock
+                groupedEntries={groupEntriesByDate(journals, sortDirection)}
+              />
             ) : (
               <div>No entries found</div>
             )}
