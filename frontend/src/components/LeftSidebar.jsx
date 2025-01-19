@@ -1,19 +1,32 @@
 import { BookOpen, ChevronLeft, File, Flame } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import JournalSideBar from "./JournalSideBar";
+import { set } from "date-fns";
 
 function LeftSidebar() {
+  const location = useLocation();
   // Initialize state from localStorage
   const [selection, setSelection] = useState(() => {
     return localStorage.getItem("sidebarSelection") || "";
   });
+  const [currentPage, setCurrentPage] = useState("");
 
   // Update localStorage on state change
   useEffect(() => {
     localStorage.setItem("sidebarSelection", selection);
   }, [selection]);
+
+  useEffect(() => {
+    if (location.pathname === "/notes") {
+      setCurrentPage("notes");
+    } else if (location.pathname === "/journal") {
+      setCurrentPage("journal");
+    } else if (location.pathname === "/") {
+      setCurrentPage("");
+    }
+  }, [location.pathname]);
 
   return (
     <div className="flex flex-col flex-shrink-0 items-center bg-zinc-900 w-[20%] h-full text-white rounded-lg p-4">
@@ -48,6 +61,10 @@ function LeftSidebar() {
               <Button
                 variant="ghost"
                 className="w-full h-12 hover:bg-zinc-800  flex items-center justify-start text-left hover:text-white"
+                style={{
+                  backgroundColor:
+                    currentPage === "" ? "rgba(255, 255, 255, 0.1)" : "",
+                }}
               >
                 <Flame />
                 Overview
@@ -58,6 +75,10 @@ function LeftSidebar() {
               <Button
                 variant="ghost"
                 className="w-full h-12 hover:bg-zinc-800  flex items-center justify-start text-left hover:text-white"
+                style={{
+                  backgroundColor:
+                    currentPage === "notes" ? "rgba(255, 255, 255, 0.1)" : "",
+                }}
               >
                 <File />
                 Notes
@@ -69,6 +90,10 @@ function LeftSidebar() {
                 onClick={() => setSelection("journal")}
                 variant="ghost"
                 className="w-full h-12 hover:bg-zinc-800  flex items-center justify-start text-left hover:text-white"
+                style={{
+                  backgroundColor:
+                    currentPage === "journal" ? "rgba(255, 255, 255, 0.1)" : "",
+                }}
               >
                 <BookOpen />
                 Journal

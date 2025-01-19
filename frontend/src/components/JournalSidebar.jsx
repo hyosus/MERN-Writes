@@ -1,19 +1,24 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import useJournalFolders from "@/hooks/useJournalFolders";
 import { LoaderCircle } from "lucide-react";
 
 function JournalSideBar() {
+  const location = useLocation();
   const { folders, isLoading, isError } = useJournalFolders();
+  const [selectedFolder, setSelectedFolder] = useState(null);
 
   if (isError) {
     console.error("Error fetching folders:", isError);
   }
 
   useEffect(() => {
-    console.log("Folders data:", folders);
-  }, [folders]);
+    if (location.pathname.includes("/journal/folder")) {
+      const folderId = location.pathname.split("/").pop();
+      setSelectedFolder(folderId);
+    }
+  });
 
   const FolderBlock = ({ folder }) => {
     return (
@@ -21,6 +26,10 @@ function JournalSideBar() {
         <Button
           variant="ghost"
           className="w-full h-12 hover:bg-zinc-800 flex items-center justify-start gap-4 text-left hover:text-white"
+          style={{
+            backgroundColor:
+              selectedFolder === folder._id ? "rgba(255, 255, 255, 0.1)" : "",
+          }}
         >
           <div
             className="size-[12px] rounded-[3px]"
