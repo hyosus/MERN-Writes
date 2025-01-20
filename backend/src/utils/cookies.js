@@ -9,7 +9,7 @@ console.log("Secure Cookies Enabled:", secure);
 export const REFRESH_PATH = "/auth/refresh";
 
 const defaults = {
-  sameSite: "Lax",
+  sameSite: "None",
   httpOnly: true,
   secure: secure,
 };
