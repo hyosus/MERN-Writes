@@ -17,10 +17,7 @@ import CreateEntryPage from "./pages/journal/CreateEntryPage";
 import EditEntryPage from "./pages/journal/EditEntryPage";
 import FolderPage from "./pages/note/FolderPage";
 import JournalFolderPage from "./pages/journal/FolderPage";
-
-export const Home = () => {
-  return <div>Home</div>;
-};
+import OverviewPage from "./pages/OverviewPage";
 
 function App() {
   const navigate = useNavigate();
@@ -29,7 +26,7 @@ function App() {
     <Routes>
       <Route path="/" element={<AppContainer />}>
         <Route element={<MainLayout />}>
-          <Route index element={<Home />} />
+          <Route index element={<OverviewPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="notes" element={<NotesPage />} />

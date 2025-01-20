@@ -354,3 +354,42 @@ export const getJournal = async (journalId) => {
     throw new Error(error.response?.data?.message || "Failed to get journal");
   }
 };
+
+export const getMostUsedMoods = async (period) => {
+  try {
+    const response = await axiosInstance.get("/journals/mood-trend/most-used", {
+      params: { period },
+    });
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to get most used moods"
+    );
+  }
+};
+
+export const getMoodStreaks = async (period) => {
+  try {
+    const response = await axiosInstance.get("/journals/mood-trend/streaks", {
+      params: { period },
+    });
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to get mood streaks"
+    );
+  }
+};
+
+export const getMoodTrends = async (period) => {
+  try {
+    const response = await axiosInstance.get("/journals/mood-trend/trend", {
+      params: { period },
+    });
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to get mood trends"
+    );
+  }
+};
