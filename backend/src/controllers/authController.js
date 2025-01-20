@@ -39,11 +39,6 @@ export const registerHandler = catchErrors(async (req, res) => {
   // Proceed with the validated data
   const { user, refreshToken, accessToken } = await createAccount(value);
 
-  console.log(
-    "setAuthCookies: ",
-    setAuthCookies({ res, accessToken, refreshToken })
-  );
-
   // Set authentication cookies and return response
   return setAuthCookies({ res, accessToken, refreshToken })
     .status(201)
@@ -59,11 +54,6 @@ export const loginHandler = catchErrors(async (req, res) => {
   if (error) return res.status(400).json({ message: error.details[0].message });
 
   const { accessToken, refreshToken } = await loginUser(value);
-
-  console.log(
-    "setAuthCookies: ",
-    setAuthCookies({ res, accessToken, refreshToken })
-  );
 
   return setAuthCookies({ res, accessToken, refreshToken })
     .status(200)
