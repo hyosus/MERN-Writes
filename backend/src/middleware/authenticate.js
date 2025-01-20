@@ -10,12 +10,10 @@ export const authenticate = catchErrors(async (req, res, next) => {
   const { error, payload } = verifyToken(accessToken);
   console.log("Token Payload:", payload);
 
-  if (!payload) {
-    console.error("Token verification error:", error);
+  if (!payload)
     throw new Error(
       error === "jwt expired" ? "Token expired" : "InvalidAccessToken"
     );
-  }
 
   req.userId = payload.userId;
   req.sessionId = payload.sessionId;
