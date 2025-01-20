@@ -55,6 +55,18 @@ export const getNotesWithoutFolder = catchErrors(async (req, res) => {
   res.status(200).json(notes);
 });
 
+export const getNotesWithFolder = catchErrors(async (req, res) => {
+  const { folderId } = req.params;
+  // get current user
+  const user = req.userId;
+  if (!user) {
+    res.status(401).json({ message: "Unauthorized" });
+    throw new Error("Unauthorized");
+  }
+  const notes = await Note.find({ userId: user, folder: folderId });
+  res.status(200).json(notes);
+});
+
 export const getNote = catchErrors(async (req, res) => {
   const { id } = req.params;
   const { error, value } = noteIdSchema.validate(id);

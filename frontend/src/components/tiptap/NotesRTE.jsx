@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createNote, updateNote } from "@/lib/api.js";
 
-export const RichTextEditor = ({ noteId: initialNoteId, initialContent }) => {
+export const NotesRTE = ({ noteId: initialNoteId, initialContent }) => {
   const [content, setContent] = useState(initialContent);
   const [noteId, setNoteId] = useState(initialNoteId); // Track the created note ID
 

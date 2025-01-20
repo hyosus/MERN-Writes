@@ -1,0 +1,88 @@
+/* Override default styles */
+.react-calendar {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  background-color: white;
+  color: black;
+  border-radius: 8px;
+  width: 100%;
+  height: fit-content;
+}
+
+.react-calendar__tile--now {
+  background-color: #e6e6e6;
+  color: black;
+}
+
+.react-calendar__tile--active {
+  background-color: transparent;
+  color: black;
+  border: 2px solid black !important;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background-color: transparent;
+}
+
+.react-calendar__viewContainer {
+  display: flex;
+  flex-grow: 1;
+}
+
+.react-calendar__month-view {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  align-items: start !important;
+}
+
+.react-calendar__month-view div:first-child {
+  width: 100%;
+  flex-grow: 1;
+  align-items: start !important;
+}
+
+.react-calendar__month-view > div > div:first-child {
+  /* background-color: thistle; */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: start !important;
+}
+
+/* MON-SUN tiles */
+.react-calendar__month-view > div > div > div:first-child {
+  width: 100%;
+  flex-grow: 0;
+}
+
+.react-calendar__month-view__days {
+  width: 100%;
+  height: 100%;
+}
+.react-calendar__month-view__days > button {
+  height: 20%;
+}
+
+/* Ensure the tile content covers the entire tile */
+.react-calendar__tile {
+  position: relative;
+}
+
+.react-calendar__tile abbr {
+  position: relative;
+  z-index: 1;
+}
+
+/* .react-calendar__tile div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+} */

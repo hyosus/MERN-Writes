@@ -106,14 +106,15 @@ export const deleteSession = async (sessionId) => {
   }
 };
 
-// export const getAllNotes = async () => {
-//   try {
-//     const response = await axiosInstance.get("/notes");
-//     return response;
-//   } catch (error) {
-//     throw new Error(error.response?.data?.message || "Failed to get notes");
-//   }
-// };
+export const getNotesWithFolder = async (folderId) => {
+  try {
+    const response = await axiosInstance.get(`/notes/folder/${folderId}`);
+    console.log("FUCK", response);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get notes");
+  }
+};
 
 export const getNotesWithoutFolder = async () => {
   try {
@@ -190,5 +191,205 @@ export const createNoteFolder = async (data) => {
     return response;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Failed to create folder");
+  }
+};
+
+export const getJournalMood = async () => {
+  try {
+    const response = await axiosInstance.get("/journals/mood");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get mood");
+  }
+};
+
+export const getJournalFolder = async () => {
+  try {
+    const response = await axiosInstance.get("/folders/journal");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get folders");
+  }
+};
+
+export const getAllMoods = async () => {
+  try {
+    const response = await axiosInstance.get("/moods");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get moods");
+  }
+};
+
+export const createEntry = async (data) => {
+  try {
+    const response = await axiosInstance.post("/journals", data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to add entry");
+  }
+};
+
+export const updateEntry = async ({ journalId, data }) => {
+  try {
+    console.log(`/journals/${journalId}`);
+    const response = await axiosInstance.put(`/journals/${journalId}`, data);
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.response?.data?.message || "Failed to edit entry");
+  }
+};
+
+export const getAllEntries = async () => {
+  try {
+    const response = await axiosInstance.get("/journals");
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get entries");
+  }
+};
+
+export const getEntriesWithFolder = async (folderId) => {
+  try {
+    const response = await axiosInstance.get(`/journals/folder/${folderId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get entries");
+  }
+};
+
+export const getEntry = async (journalId) => {
+  try {
+    const response = await axiosInstance.get(`/journals/${journalId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get entry");
+  }
+};
+
+export const deleteEntry = async (journalId) => {
+  try {
+    const response = await axiosInstance.delete(`/journals/${journalId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to delete entry");
+  }
+};
+
+export const createMood = async (data) => {
+  try {
+    const response = await axiosInstance.post("/moods", data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to create mood");
+  }
+};
+
+export const updateMood = async ({ moodId, data }) => {
+  try {
+    const response = await axiosInstance.put(`/moods/${moodId}`, data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to update mood");
+  }
+};
+
+export const deleteMood = async (moodId) => {
+  try {
+    const response = await axiosInstance.delete(`/moods/${moodId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to delete mood");
+  }
+};
+
+export const createFolder = async (data) => {
+  try {
+    const response = await axiosInstance.post("/folders", data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to create folder");
+  }
+};
+
+export const getFolder = async (folderId) => {
+  try {
+    const response = await axiosInstance.get(`/folders/${folderId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get folder");
+  }
+};
+
+export const updateFolder = async ({ folderId, data }) => {
+  try {
+    const response = await axiosInstance.put(`/folders/${folderId}`, data);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to update folder");
+  }
+};
+
+export const deleteFolder = async (folderId) => {
+  try {
+    // First remove folder from all journals
+    const journals = await axiosInstance.put(
+      `/journals/remove-folder/${folderId}`
+    );
+
+    // Then delete folder
+    const response = await axiosInstance.delete(`/folders/${folderId}`);
+    return { response, journals };
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to delete folder");
+  }
+};
+
+export const getJournal = async (journalId) => {
+  try {
+    const response = await axiosInstance.get(`/journals/${journalId}`);
+    return response;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Failed to get journal");
+  }
+};
+
+export const getMostUsedMoods = async (period) => {
+  try {
+    const response = await axiosInstance.get("/journals/mood-trend/most-used", {
+      params: { period },
+    });
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to get most used moods"
+    );
+  }
+};
+
+export const getMoodStreaks = async (period) => {
+  try {
+    const response = await axiosInstance.get("/journals/mood-trend/streaks", {
+      params: { period },
+    });
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to get mood streaks"
+    );
+  }
+};
+
+export const getMoodTrends = async (period) => {
+  try {
+    const response = await axiosInstance.get("/journals/mood-trend/trend", {
+      params: { period },
+    });
+    return response;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Failed to get mood trends"
+    );
   }
 };

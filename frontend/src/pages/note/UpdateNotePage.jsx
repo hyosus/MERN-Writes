@@ -1,4 +1,4 @@
-import { RichTextEditor } from "@/components/tiptap/RichTextEditor";
+import { NotesRTE } from "@/components/tiptap/NotesRTE";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useNote from "@/hooks/useNote";
@@ -55,7 +55,7 @@ export default () => {
           className="border-white/30"
         />
       </div>
-      <RichTextEditor noteId={noteId} initialContent={content} />
+      <NotesRTE noteId={noteId} initialContent={content} />
     </>
   );
 };
