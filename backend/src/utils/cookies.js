@@ -12,7 +12,7 @@ const defaults = {
   sameSite: "None",
   httpOnly: true,
   secure: secure,
-  domain: ".onrender.com", // Allow cookies to be shared across subdomains
+  path: "/",
 };
 
 export const getAccessTokenCookieOptions = () => ({
