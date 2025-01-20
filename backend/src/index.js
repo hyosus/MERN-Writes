@@ -19,6 +19,8 @@ dotenv.config();
 
 const app = express();
 
+const port = process.env.PORT || 5000;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -28,13 +30,6 @@ app.use(
   })
 );
 app.use(cookParser());
-
-app.get(
-  "/",
-  catchErrors(async (req, res) => {
-    throw new Error("This is an error test");
-  })
-);
 
 app.use("/api/auth", authRoutes);
 
@@ -48,7 +43,7 @@ app.use("/api/moods", authenticate, moodRoutes);
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log("Server is running on port ", PORT);
+app.listen(port, () => {
+  console.log("Server is running on port ", port);
   connectDB();
 });
