@@ -4,6 +4,8 @@ dotenv.config();
 
 const secure = process.env.NODE_ENV === "production";
 
+console.log("Secure Cookies Enabled:", secure);
+
 export const REFRESH_PATH = "/auth/refresh";
 
 const defaults = {
