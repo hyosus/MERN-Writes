@@ -23,7 +23,7 @@ const port = process.env.PORT || 5000;
 
 const allowedOrigins = [
   "http://localhost:5173", // Local development
-  "https://mern-writes-frontend.onrender.com", // Render frontend
+  "https://sywrites.onrender.com", // Render frontend
 ];
 
 app.use(express.json());
