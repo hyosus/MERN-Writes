@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const secure = process.env.NODE_ENV === "production";
 
 export const REFRESH_PATH = "/auth/refresh";
