@@ -21,11 +21,22 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
+const allowedOrigins = [
+  "http://localhost:5173", // Local development
+  "https://mern-writes-frontend.onrender.com", // Render frontend
+];
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: APP_ORIGIN,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
