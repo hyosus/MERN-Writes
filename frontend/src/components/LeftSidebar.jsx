@@ -2,8 +2,7 @@ import { BookOpen, ChevronLeft, File, Flame } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import JournalSideBar from "./JournalSideBar";
-import { set } from "date-fns";
+import JournalSideBar from "./JournalSidebar";
 
 function LeftSidebar() {
   const location = useLocation();
