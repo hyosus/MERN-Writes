@@ -64,14 +64,18 @@ const FolderPage = () => {
     if (editedName.trim() !== folder.name) {
       updateFolder({
         folderId: folderId,
-        name: editedName.trim(),
+        data: {
+          name: editedName.trim(),
+        },
       });
     }
 
     if (customColour.hex !== folder.colour) {
       updateFolder({
         folderId: folderId,
-        colour: customColour.hex,
+        data: {
+          colour: customColour.hex,
+        },
       });
     }
     setIsEditing(false);
