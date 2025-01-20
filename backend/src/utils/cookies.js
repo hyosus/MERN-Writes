@@ -12,6 +12,7 @@ const defaults = {
   sameSite: "None",
   httpOnly: true,
   secure: secure,
+  domain: ".onrender.com", // Allow cookies to be shared across subdomains
 };
 
 export const getAccessTokenCookieOptions = () => ({
@@ -27,8 +28,8 @@ export const getRefreshTokenCookieOptions = () => ({
 
 export const setAuthCookies = ({ res, accessToken, refreshToken }) => {
   res
-    .cookie("accessToken", accessToken, getAccessTokenCookieOptions)
-    .cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions);
+    .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
+    .cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions());
 
   return res;
 };
