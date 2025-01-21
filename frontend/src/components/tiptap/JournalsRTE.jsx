@@ -8,8 +8,14 @@ import { createEntry, updateEntry } from "@/lib/api.js";
 import queryClient from "@/lib/queryClient";
 import { JOURNALS } from "@/hooks/useJournal";
 
-const JournalsRTE = ({ date, journalId, setEntryId, initialContent }) => {
-  const [content, setContent] = useState(initialContent || "");
+const JournalsRTE = ({
+  date,
+  journalId: initialJournalId,
+  setEntryId,
+  initialContent,
+}) => {
+  const [content, setContent] = useState(initialContent);
+  const [journalId, setJournalId] = useState(initialJournalId);
 
   const editor = useEditor(
     {
@@ -21,7 +27,9 @@ const JournalsRTE = ({ date, journalId, setEntryId, initialContent }) => {
       ],
       content: content,
       onUpdate({ editor }) {
-        const updatedContent = editor.getHTML(); // get editor's content
+        const updatedContent = editor.getHTML();
+        console.log("Before update:", content);
+        console.log("After update:", updatedContent);
         setContent(updatedContent);
 
         if (journalId) {
@@ -50,7 +58,7 @@ const JournalsRTE = ({ date, journalId, setEntryId, initialContent }) => {
   const { mutate: editEntry } = useMutation({
     mutationFn: updateEntry,
     onSuccess: (data) => {
-      queryClient.invalidateQueries([JOURNALS]);
+      // queryClient.invalidateQueries([JOURNALS]);
       console.log("Entry updated: ", data);
     },
     onError: (error) => {
@@ -59,13 +67,16 @@ const JournalsRTE = ({ date, journalId, setEntryId, initialContent }) => {
   });
 
   useEffect(() => {
-    if (journalId) {
-      setEntryId(journalId);
+    if (initialJournalId) {
+      setEntryId(initialJournalId);
     }
-    if (editor && initialContent) {
-      editor.commands.setContent(initialContent);
+    if (initialContent) {
+      setContent(initialContent);
+      if (editor) {
+        editor.commands.setContent(initialContent);
+      }
     }
-  }, [editor, journalId, initialContent]);
+  }, [initialJournalId, initialContent]);
 
   return (
     <div className="CONTAINER flex flex-col h-full flex-grow-1">

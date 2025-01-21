@@ -24,6 +24,7 @@ import { useColor } from "react-color-palette";
 import { hexToColor } from "./CreateEntryPage";
 import DeleteEntryModal from "@/components/journal/DeleteEntryModal";
 import useDeleteEntry from "@/hooks/useDeleteEntry";
+import useJournalById from "@/hooks/useJournalById";
 
 const EditEntryPage = () => {
   const { journalId } = useParams();
@@ -40,39 +41,30 @@ const EditEntryPage = () => {
   const [customColour, setCustomColour] = useColor("#FFFFFF");
   const [moodId, setMoodId] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { deleteEntry } = useDeleteEntry();
 
-  const {
-    data: journal,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["entry", journalId],
-    queryFn: () => getEntry(journalId),
-  });
+  const { deleteEntry } = useDeleteEntry();
+  const { journal, isLoading, isError } = useJournalById(journalId);
+
+  useEffect(() => {
+    if (journal) {
+      console.log("Journal data: ", journal);
+      console.log("TITLE: ", journal.title);
+      setDate(new Date(journal.date) || new Date());
+      setTitle(journal.title || " ");
+      setContent(journal.content || " ");
+      setSelectedMoods(journal.mood || []);
+    }
+  }, [journal]);
 
   const { mutate: editEntry } = useMutation({
     mutationFn: updateEntry,
     onSuccess: () => {
-      queryClient.invalidateQueries([MOODS]);
-      queryClient.invalidateQueries([JOURNALS]);
+      console.log("Entry updated");
     },
     onError: (error) => {
       console.error("Error updating entry: ", error);
     },
   });
-
-  useEffect(() => {
-    if (journal) {
-      setDate(new Date(journal.date));
-      setTitle(journal.title);
-      setContent(journal.content);
-      setSelectedMoods(journal.mood || []);
-    }
-  }, [journal]);
-
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error...</p>;
 
   const moodBlock = (mood) => {
     const isSelected = selectedMoods.includes(mood._id);
@@ -191,6 +183,9 @@ const EditEntryPage = () => {
       deleteEntry(journalId);
     }
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error...</p>;
 
   return (
     <>
