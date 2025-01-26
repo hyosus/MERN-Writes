@@ -23,6 +23,7 @@ const port = PORT || 5000;
 const allowedOrigins = [
   APP_ORIGIN_DEV,
   APP_ORIGIN_PROD,
+  "https://sywrites.onrender.com", // Explicit fallback
   "https://mern-writes-backend.onrender.com",
 ];
 
@@ -31,6 +32,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Incoming origin:", origin);
+      console.log("Allowed origins:", allowedOrigins);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
