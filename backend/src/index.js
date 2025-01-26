@@ -27,6 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Incoming origin:", origin);
+      console.log("Allowed origins:", allowedOrigins);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
