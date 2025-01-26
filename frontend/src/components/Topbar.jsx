@@ -32,6 +32,7 @@ function Topbar() {
         {/* Sidebar with slide animation */}
         <div
           ref={sideBarRef}
+          onClick={(e) => e.stopPropagation()} // Prevent click propagation to overlay
           className={`fixed inset-y-0 left-0 w-64 bg-zinc-900 p-4 z-50 transform transition-transform duration-300 ${
             isSidebarVisible ? "translate-x-0" : "-translate-x-full"
           }`}
