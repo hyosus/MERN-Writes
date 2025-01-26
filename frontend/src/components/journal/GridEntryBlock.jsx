@@ -142,15 +142,15 @@ const GridEntryBlock = ({ groupedEntries }) => {
                 {months.map(({ month, entries }) => (
                   <div key={month}>
                     <h3 className="text-xl">{month}</h3>
-                    <div className="grid grid-cols-2 gap-6 pt-3 pb-8">
+                    <div className="grid md:grid-cols-2 gap-6 pt-3 pb-8">
                       {entries.map((entry) => (
                         <div
                           key={entry._id}
-                          className="flex cursor-pointer hover:bg-white/5 rounded-lg translate-x-[-1rem]"
+                          className="flex cursor-pointer justify-between hover:bg-white/5 rounded-lg translate-x-[-1rem]"
                         >
                           <Link
                             to={`/journal/${entry._id}`}
-                            className="flex-1 p-4"
+                            className="grid p-4"
                           >
                             <div className="flex gap-4 ">
                               <div className="flex border border-white rounded min-h-[80px] px-4 items-center">
