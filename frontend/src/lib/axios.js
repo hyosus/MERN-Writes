@@ -5,6 +5,10 @@ import { navigate } from "./navigation";
 const options = {
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+  },
 };
 
 const TokenRefreshClient = axios.create(options);

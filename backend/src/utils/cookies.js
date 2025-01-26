@@ -1,11 +1,18 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const secure = process.env.NODE_ENV === "production";
+
+console.log("Secure Cookies Enabled:", secure);
 
 export const REFRESH_PATH = "/auth/refresh";
 
 const defaults = {
-  sameSite: "Strict",
+  sameSite: secure ? "None" : "Lax",
   httpOnly: true,
   secure: secure,
+  path: "/",
 };
 
 export const getAccessTokenCookieOptions = () => ({
@@ -21,8 +28,8 @@ export const getRefreshTokenCookieOptions = () => ({
 
 export const setAuthCookies = ({ res, accessToken, refreshToken }) => {
   res
-    .cookie("accessToken", accessToken, getAccessTokenCookieOptions)
-    .cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions);
+    .cookie("accessToken", accessToken, getAccessTokenCookieOptions())
+    .cookie("refreshToken", refreshToken, getRefreshTokenCookieOptions());
 
   return res;
 };

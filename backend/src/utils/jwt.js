@@ -20,14 +20,16 @@ export const signToken = (payload, options) => {
   return jwt.sign(payload, secret, { ...defaults, ...signOpts });
 };
 
+// Log token verification process
 export const verifyToken = (token, options) => {
   const { secret = JWT_SECRET, ...verifyOpts } = options || {};
 
   try {
     const payload = jwt.verify(token, secret, { ...defaults, ...verifyOpts });
-
+    console.log("Token verified successfully:", payload);
     return { payload };
   } catch (error) {
+    console.error("Token verification error:", error.message);
     return { error: error.message };
   }
 };
