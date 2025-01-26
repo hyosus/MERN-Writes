@@ -8,7 +8,7 @@ import folderRoutes from "./routes/folderRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
-import { APP_ORIGIN, PORT } from "./constants/env.js";
+import { APP_ORIGIN_DEV, APP_ORIGIN_PROD, PORT } from "./constants/env.js";
 import errorHandler from "./middleware/errorHandling.js";
 import { authenticate } from "./middleware/authenticate.js";
 import journalRoutes from "./routes/journalRoutes.js";
@@ -20,7 +20,11 @@ const app = express();
 
 const port = PORT || 5000;
 
-const allowedOrigins = [APP_ORIGIN];
+const allowedOrigins = [
+  APP_ORIGIN_DEV,
+  APP_ORIGIN_PROD,
+  "https://mern-writes-backend.onrender.com",
+];
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
