@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import JournalSideBar from "./JournalSidebar";
 
-function LeftSidebar() {
+function LeftSidebar({ isSidebarVisible, onClose }) {
   const location = useLocation();
   // Initialize state from localStorage
   const [selection, setSelection] = useState(() => {
@@ -27,8 +27,13 @@ function LeftSidebar() {
     }
   }, [location.pathname]);
 
+  console.log("Selection:", selection);
+
   return (
-    <div className="flex flex-col flex-shrink-0 items-center bg-zinc-900 w-[20%] h-full text-white rounded-lg p-4">
+    <div
+      className={`w-full md:w-[20%] flex flex-col flex-shrink-0 items-center bg-zinc-900 h-full text-white rounded-lg p-4
+        ${isSidebarVisible ? "" : "hidden md:flex"}`}
+    >
       <div className="flex items-center justify-between">
         {selection === "journal" && (
           <Button
@@ -53,10 +58,10 @@ function LeftSidebar() {
 
       <div className="flex flex-col w-full justify-center py-6 gap-4">
         {selection === "journal" ? (
-          <JournalSideBar />
+          <JournalSideBar onClose={onClose} />
         ) : (
           <>
-            <Link to="/">
+            <Link to="/" onClick={() => onClose()}>
               <Button
                 variant="ghost"
                 className="w-full h-12 hover:bg-zinc-800  flex items-center justify-start text-left hover:text-white"
@@ -70,7 +75,7 @@ function LeftSidebar() {
               </Button>
             </Link>
 
-            <Link to="/notes">
+            <Link to="/notes" onClick={() => onClose()}>
               <Button
                 variant="ghost"
                 className="w-full h-12 hover:bg-zinc-800  flex items-center justify-start text-left hover:text-white"
@@ -86,7 +91,9 @@ function LeftSidebar() {
 
             <Link to="/journal">
               <Button
-                onClick={() => setSelection("journal")}
+                onClick={() => {
+                  setSelection("journal");
+                }}
                 variant="ghost"
                 className="w-full h-12 hover:bg-zinc-800  flex items-center justify-start text-left hover:text-white"
                 style={{

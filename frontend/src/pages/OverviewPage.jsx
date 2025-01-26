@@ -63,15 +63,13 @@ const OverviewPage = () => {
     }
   }, [mostUsedMoods, moodStreaks, moodTrend]);
 
+  if (isLoading || isStreakLoading || isTrendLoading) return <p>Loading...</p>;
   if (
-    isLoading ||
-    isStreakLoading ||
-    isTrendLoading ||
     topMoodData.length === 0 ||
     streaksData.length === 0 ||
     moodTrendData.length === 0
   )
-    return <p>Loading...</p>;
+    return <p>Start writing to get your statistics!</p>;
 
   return (
     <>

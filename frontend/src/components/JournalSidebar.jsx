@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import useJournalFolders from "@/hooks/useJournalFolders";
 import { LoaderCircle } from "lucide-react";
 
-function JournalSideBar() {
+function JournalSideBar({ onClose }) {
   const location = useLocation();
   const { folders, isLoading, isError } = useJournalFolders();
   const [selectedFolder, setSelectedFolder] = useState(null);
@@ -22,7 +22,11 @@ function JournalSideBar() {
 
   const FolderBlock = ({ folder }) => {
     return (
-      <Link to={`/journal/folder/${folder._id}`} key={folder._id}>
+      <Link
+        to={`/journal/folder/${folder._id}`}
+        key={folder._id}
+        onClick={() => onClose()}
+      >
         <Button
           variant="ghost"
           className="w-full h-12 hover:bg-zinc-800 flex items-center justify-start gap-4 text-left hover:text-white"
@@ -42,7 +46,7 @@ function JournalSideBar() {
   };
   return (
     <>
-      <Link to="/journal">
+      <Link to="/journal" onClick={() => onClose()}>
         <Button
           variant="ghost"
           className="w-full h-12 hover:bg-zinc-800 flex items-center justify-start gap-4 text-left hover:text-white"
@@ -54,7 +58,6 @@ function JournalSideBar() {
 
       <hr className="h-[1px] w-full" />
 
-      {/* TODO: get journal folders to map and display dynamic icon color */}
       {isLoading && <LoaderCircle size={50} className="animate-spin" />}
       {isError && <p className="text-red-600">Failed to fetch folders</p>}
       {folders &&
