@@ -20,11 +20,7 @@ const app = express();
 
 const port = PORT || 5000;
 
-const allowedOrigins = [
-  APP_ORIGIN_DEV,
-  APP_ORIGIN_PROD,
-  "https://mern-writes-backend.onrender.com",
-];
+const allowedOrigins = [APP_ORIGIN_DEV, APP_ORIGIN_PROD];
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
