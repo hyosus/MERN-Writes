@@ -144,13 +144,10 @@ const GridEntryBlock = ({ groupedEntries }) => {
                     <h3 className="text-xl">{month}</h3>
                     <div className="grid md:grid-cols-2 gap-6 pt-3 pb-8">
                       {entries.map((entry) => (
-                        <div
-                          key={entry._id}
-                          className="flex cursor-pointer justify-between hover:bg-white/5 rounded-lg translate-x-[-1rem]"
-                        >
-                          <Link
-                            to={`/journal/${entry._id}`}
-                            className="grid p-4"
+                        <Link to={`/journal/${entry._id}`} className="p-4">
+                          <div
+                            key={entry._id}
+                            className="flex cursor-pointer justify-between hover:bg-white/5 rounded-lg translate-x-[-1rem]"
                           >
                             <div className="flex gap-4 ">
                               <div className="flex border border-white rounded min-h-[80px] px-4 items-center">
@@ -168,56 +165,58 @@ const GridEntryBlock = ({ groupedEntries }) => {
                                 </p>
                               </div>
                             </div>
-                          </Link>
 
-                          <div
-                            className=""
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="icon"
-                                  onClick={() => {
-                                    handleEllipsisClick(entry._id);
-                                  }}
-                                >
-                                  <Ellipsis />
-                                </Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-fit flex flex-col gap-4">
-                                {isInFolder ? (
+                            <div
+                              className=""
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="icon"
+                                    onClick={() => {
+                                      handleEllipsisClick(entry._id);
+                                    }}
+                                  >
+                                    <Ellipsis />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-fit flex flex-col gap-4">
+                                  {isInFolder ? (
+                                    <Button
+                                      className="w-full h-12 flex items-center justify-start text-md text-left"
+                                      variant="ghost"
+                                      onClick={() => handleRemoveFromFolder()}
+                                    >
+                                      <CircleMinus />
+                                      Remove from Folder
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      className="w-full h-12 flex items-center justify-start text-md text-left"
+                                      variant="ghost"
+                                      onClick={() =>
+                                        setIsFoldersDialogOpen(true)
+                                      }
+                                    >
+                                      <CirclePlus />
+                                      Add to Folder
+                                    </Button>
+                                  )}
+
                                   <Button
                                     className="w-full h-12 flex items-center justify-start text-md text-left"
-                                    variant="ghost"
-                                    onClick={() => handleRemoveFromFolder()}
+                                    variant="destructive"
+                                    onClick={() => setIsDeleteModalOpen(true)}
                                   >
-                                    <CircleMinus />
-                                    Remove from Folder
+                                    <Trash />
+                                    Delete
                                   </Button>
-                                ) : (
-                                  <Button
-                                    className="w-full h-12 flex items-center justify-start text-md text-left"
-                                    variant="ghost"
-                                    onClick={() => setIsFoldersDialogOpen(true)}
-                                  >
-                                    <CirclePlus />
-                                    Add to Folder
-                                  </Button>
-                                )}
-
-                                <Button
-                                  className="w-full h-12 flex items-center justify-start text-md text-left"
-                                  variant="destructive"
-                                  onClick={() => setIsDeleteModalOpen(true)}
-                                >
-                                  <Trash />
-                                  Delete
-                                </Button>
-                              </PopoverContent>
-                            </Popover>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>

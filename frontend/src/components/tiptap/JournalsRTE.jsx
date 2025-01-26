@@ -8,14 +8,8 @@ import { createEntry, updateEntry } from "@/lib/api.js";
 import queryClient from "@/lib/queryClient";
 import { JOURNALS } from "@/hooks/useJournal";
 
-const JournalsRTE = ({
-  date,
-  journalId: initialJournalId,
-  setEntryId,
-  initialContent,
-}) => {
+const JournalsRTE = ({ date, journalId, setJournalId, initialContent }) => {
   const [content, setContent] = useState(initialContent);
-  const [journalId, setJournalId] = useState(initialJournalId);
 
   const editor = useEditor(
     {
@@ -31,6 +25,8 @@ const JournalsRTE = ({
         console.log("Before update:", content);
         console.log("After update:", updatedContent);
         setContent(updatedContent);
+
+        console.log("Journal ID:", journalId);
 
         if (journalId) {
           // edit
@@ -50,7 +46,7 @@ const JournalsRTE = ({
   const { mutate: addEntry } = useMutation({
     mutationFn: createEntry,
     onSuccess: (data) => {
-      setEntryId(data._id); // Set the created entry ID
+      setJournalId(data._id); // Set the created entry ID
       console.log("Entry created with ID: ", data._id);
     },
   });
@@ -67,8 +63,9 @@ const JournalsRTE = ({
   });
 
   useEffect(() => {
-    if (initialJournalId) {
-      setEntryId(initialJournalId);
+    if (journalId) {
+      setJournalId(journalId);
+      console.log("Initial Journal ID:", journalId);
     }
     if (initialContent) {
       setContent(initialContent);
@@ -76,7 +73,7 @@ const JournalsRTE = ({
         editor.commands.setContent(initialContent);
       }
     }
-  }, [initialJournalId, initialContent]);
+  }, [journalId, initialContent]);
 
   return (
     <div className="CONTAINER flex flex-col h-full flex-grow-1">

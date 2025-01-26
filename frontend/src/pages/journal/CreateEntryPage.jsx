@@ -43,7 +43,7 @@ const CreateEntryPage = () => {
   const { date } = useParams();
   const [customDate, setCustomDate] = useState(null);
   const [selectedMoods, setSelectedMoods] = useState([]);
-  const [journalId, setEntryId] = useState(null); // Track the created entry ID
+  const [journalId, setJournalId] = useState(null); // Track the created entry ID
   const [title, setTitle] = useState("");
   const [showColourPicker, setShowColourPicker] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -61,7 +61,7 @@ const CreateEntryPage = () => {
     mutationFn: createEntry,
     onSuccess: (data) => {
       console.log("Entry created with ID: ", data._id);
-      setEntryId(data._id); // Set the created note ID
+      setJournalId(data._id); // Set the created note ID
       queryClient.invalidateQueries([MOODS]);
     },
   });
@@ -268,7 +268,7 @@ const CreateEntryPage = () => {
       <JournalsRTE
         date={customDate ? formatDate(customDate) : formatDate(new Date(date))}
         journalId={journalId}
-        setEntryId={setEntryId}
+        setJournalId={setJournalId}
         content={content}
         setContent={setContent}
       />

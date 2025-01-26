@@ -276,7 +276,7 @@ const EditEntryPage = () => {
       <JournalsRTE
         date={formatDate(new Date(date))}
         journalId={journalId}
-        setEntryId={() => {}} // Not needed for edit mode
+        setJournalId={() => {}} // Not needed for edit mode
         initialContent={content}
       />
 
